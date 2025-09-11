@@ -2,9 +2,6 @@ provider "azurerm" {
   features {}
 }
 
-##-----------------------------------------------------------------------------
-## Resources
-##-----------------------------------------------------------------------------
 data "azurerm_client_config" "current_client_config" {}
 
 ##-----------------------------------------------------------------------------
@@ -15,7 +12,7 @@ module "resource_group" {
   source      = "terraform-az-modules/resource-group/azure"
   version     = "1.0.0"
   name        = "core"
-  environment = "dev"
+  environment = "devdas"
   location    = "centralus"
   label_order = ["name", "environment", "location"]
 }
@@ -89,7 +86,7 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azure"
   version                       = "1.0.0"
-  name                          = "coreli"
+  name                          = "corei"
   environment                   = "devdas"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
@@ -154,10 +151,11 @@ module "flexible-postgresql" {
     standby_availability_zone = 2
   }
   principal_name = "Database_Admins"
-  #private server
-  #(Resources to recreate when changing private to public cluster or vise-versa )
-  private_dns                = true
-  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
+  #Public server
+  allowed_cidrs = {
+    "allowed_all_ip"      = "0.0.0.0/0"
+    "allowed_specific_ip" = "11.32.16.78/32"
+  }
   log_analytics_workspace_id = module.log-analytics.workspace_id
   # Database encryption with costumer manage keys
   cmk_encryption_enabled = true
