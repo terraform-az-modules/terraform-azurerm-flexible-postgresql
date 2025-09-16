@@ -1,6 +1,6 @@
 ##-----------------------------------------------------------------------------
 ## Random Password Resource.
-## Will be passed as admin password of mysql server when admin password is not passed manually as variable.
+## Will be passed as admin password of postgresql server when admin password is not passed manually as variable.
 ##-----------------------------------------------------------------------------
 resource "random_password" "main" {
   count       = var.enabled && var.admin_password == null ? 1 : 0
@@ -15,14 +15,16 @@ resource "random_password" "main" {
 ## Labels module callled that will be used for naming and tags.
 ##-----------------------------------------------------------------------------
 module "labels" {
-  source      = "clouddrove/labels/azure"
-  version     = "1.0.0"
-  name        = var.name
-  environment = var.environment
-  managedby   = var.managedby
-  label_order = var.label_order
-  repository  = var.repository
-  extra_tags  = var.extra_tags
+  source          = "terraform-az-modules/tags/azure"
+  version         = "1.0.0"
+  name            = var.name
+  location        = var.location
+  environment     = var.environment
+  managedby       = var.managedby
+  label_order     = var.label_order
+  repository      = var.repository
+  deployment_mode = var.deployment_mode
+  extra_tags      = var.extra_tags
 }
 
 ##----------------------------------------------------------------------------- 
@@ -30,14 +32,13 @@ module "labels" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server" "main" {
   count                             = var.enabled ? 1 : 0
-  name                              = var.resource_position_prefix ? format("mysql-flexible-server-%s", local.name) : format("%s-mysql-flexible-server", local.name)
+  name                              = var.resource_position_prefix ? format("postgresql-flexible-server-%s", local.name) : format("%s-postgresql-flexible-server", local.name)
   resource_group_name               = var.resource_group_name
   location                          = var.location
   administrator_login               = var.admin_username
   administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
   backup_retention_days             = var.backup_retention_days
   delegated_subnet_id               = var.delegated_subnet_id
-  private_dns_zone_id               = var.existing_private_dns_zone_id
   sku_name                          = join("_", [lookup(var.tier_map, var.tier, "GeneralPurpose"), "Standard", var.size])
   create_mode                       = var.create_mode
   geo_redundant_backup_enabled      = var.geo_redundant_backup_enabled
@@ -75,6 +76,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
     }
   }
 
+
   dynamic "identity" {
     for_each = var.cmk_encryption_enabled ? [1] : []
     content {
@@ -90,13 +92,22 @@ resource "azurerm_postgresql_flexible_server" "main" {
       primary_user_assigned_identity_id    = azurerm_user_assigned_identity.identity[0].id
       geo_backup_key_vault_key_id          = var.geo_redundant_backup_enabled ? var.geo_backup_key_vault_key_id : null
       geo_backup_user_assigned_identity_id = var.geo_redundant_backup_enabled ? var.geo_backup_user_assigned_identity_id : null
-
     }
   }
 
   lifecycle {
     ignore_changes = [high_availability[0].standby_availability_zone]
   }
+}
+
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "main" {
+  count               = var.enabled && var.active_directory_auth_enabled ? 1 : 0
+  server_name         = azurerm_postgresql_flexible_server.main[0].name
+  resource_group_name = var.resource_group_name
+  tenant_id           = var.tenant_id
+  object_id           = var.object_id
+  principal_name      = var.display_name
+  principal_type      = var.principal_type
 }
 
 ##----------------------------------------------------------------------------- 
@@ -128,7 +139,7 @@ resource "azurerm_key_vault_key" "kvkey" {
 ## Below resource will create Firewall rules for Public server.
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rules" {
-  for_each = var.enabled && !var.private_dns ? var.allowed_cidrs : {}
+  for_each = var.enabled && var.public_network_access_enabled ? var.allowed_cidrs : {}
 
   name             = each.key
   server_id        = azurerm_postgresql_flexible_server.main[0].id
@@ -137,7 +148,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rules" {
 }
 
 ##-----------------------------------------------------------------------------
-## Below resource will create mysql flexible database.
+## Below resource will create postgresql flexible database.
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server_database" "main" {
   for_each   = var.enabled ? toset(var.database_names) : []

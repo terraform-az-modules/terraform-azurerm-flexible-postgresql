@@ -1,7 +1,6 @@
 ##-----------------------------------------------------------------------------
 ## Naming convention
 ##-----------------------------------------------------------------------------
-
 variable "custom_name" {
   type        = string
   default     = null
@@ -70,6 +69,12 @@ variable "enabled" {
   type        = bool
   default     = true
   description = "Set to false to prevent the module from creating any resources."
+}
+
+variable "deployment_mode" {
+  type        = string
+  default     = "terraform"
+  description = "Specifies how the infrastructure/resource is deployed"
 }
 
 ##-----------------------------------------------------------------------------
@@ -155,7 +160,7 @@ variable "postgresql_version" {
 
 variable "zone" {
   type        = number
-  default     = null
+  default     = "1"
   description = "Specifies the Availability Zone in which this PostgreSQL Flexible Server should be located. Possible values are 1, 2 and 3."
 }
 
@@ -189,8 +194,9 @@ variable "location" {
 }
 
 variable "existing_private_dns_zone_id" {
-  type    = string
-  default = null
+  type        = string
+  default     = null
+  description = "For fetching the private dns zone id"
 }
 
 variable "storage_mb" {
@@ -229,7 +235,7 @@ variable "high_availability" {
 
 variable "enable_diagnostic" {
   type        = bool
-  default     = true
+  default     = false
   description = "Flag to control creation of diagnostic settings."
 }
 
@@ -284,7 +290,7 @@ variable "eventhub_authorization_rule_id" {
 
 variable "active_directory_auth_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "Set to true to enable Active Directory Authentication"
 }
 
@@ -328,6 +334,41 @@ variable "server_configurations" {
   default     = {}
 }
 
+variable "principal_name" {
+  type        = string
+  default     = null
+  description = "The name of Azure Active Directory principal."
+}
+
+variable "principal_type" {
+  type        = string
+  default     = null
+  description = "The name of Azure Active Directory principal."
+}
+
+variable "object_id" {
+  type        = string
+  default     = null
+  description = "The name of Azure Active Directory principal."
+}
+
+variable "tenant_id" {
+  type        = string
+  default     = null
+  description = "The name of Azure Active Directory principal."
+}
+
+variable "display_name" {
+  type        = string
+  default     = null
+  description = "The name of Azure Active Directory principal."
+}
+
+variable "enable_active_directory" {
+  type        = bool
+  default     = false
+  description = "To attach entra"
+}
 
 variable "public_network_access_enabled" {
   type        = bool

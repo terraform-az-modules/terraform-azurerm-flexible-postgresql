@@ -54,7 +54,7 @@ module "subnet" {
           name = "delegation1"
           service_delegations = [
             {
-              name    = "Microsoft.DBforMySQL/flexibleServers"
+              name    = "Microsoft.DBforPostgreSQL/flexibleServers"
               actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
             }
           ]
@@ -89,8 +89,8 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azure"
   version                       = "1.0.0"
-  name                          = "coreli"
-  environment                   = "devdas"
+  name                          = "corejan"
+  environment                   = "devjan"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
   location                      = module.resource_group.resource_group_location
@@ -121,7 +121,7 @@ module "private_dns" {
   version             = "1.0.0"
   location            = module.resource_group.resource_group_location
   name                = "dnssse"
-  environment         = "devlop"
+  environment         = "devdas"
   resource_group_name = module.resource_group.resource_group_name
   private_dns_config = [
     {
@@ -135,8 +135,11 @@ module "private_dns" {
   ]
 }
 
+# ------------------------------------------------------------------------------
+# Flexible Postgresql
+# ------------------------------------------------------------------------------
 module "flexible-postgresql" {
-  depends_on          = [module.resource_group, module.vnet]
+  depends_on          = [module.resource_group, module.vnet, module.private_dns]
   source              = "../.."
   name                = "core"
   environment         = "test"
@@ -153,12 +156,18 @@ module "flexible-postgresql" {
     mode                      = "ZoneRedundant"
     standby_availability_zone = 2
   }
-  principal_name = "Database_Admins"
+  # provide the required values to attach aad group
+  active_directory_auth_enabled = true
+  principal_name                = ""
+  principal_type                = ""
+  tenant_id                     = ""
+  object_id                     = ""
+  display_name                  = ""
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
-  private_dns                = true
-  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
-  log_analytics_workspace_id = module.log-analytics.workspace_id
+  existing_private_dns_zone_id = module.private_dns.private_dns_zone_ids.postgresql_server
+  delegated_subnet_id          = module.subnet.subnet_ids.subnet1
+  log_analytics_workspace_id   = module.log-analytics.workspace_id
   # Database encryption with costumer manage keys
   cmk_encryption_enabled = true
   key_vault_id           = module.vault.id
