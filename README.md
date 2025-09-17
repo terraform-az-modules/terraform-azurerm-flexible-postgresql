@@ -181,6 +181,12 @@ This module has dependencies on:
 
 - [Labels Module](https://github.com/terraform-az-modules/terraform-azure-tags): Provides resource tagging.
  -->
+## Skipped Following checks
+| Skipped Check    | Reason for Skipping                   |
+|------------------|---------------------------------------|
+| CKV_TF_1         | Required by module design              |
+| CKV_AZURE_136    | Managed service, check not applicable  |
+| CKV2_AZURE_57    | Compliance handled outside Terraform   |
 
 
 ## Module Dependencies
