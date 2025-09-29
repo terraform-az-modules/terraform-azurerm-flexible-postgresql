@@ -5,5 +5,5 @@ output "postgresql_flexible_server_id" {
 
 output "postgresql_flexible_server_name" {
   value       = try(azurerm_postgresql_flexible_server.main[0].fqdn, null)
-  description = "The Name of the MySQL Flexible Server."
+  description = "The FQDN of the PostgreSQL Flexible Server."
 }

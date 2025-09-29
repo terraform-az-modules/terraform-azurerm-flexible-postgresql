@@ -32,7 +32,7 @@ module "labels" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server" "main" {
   count                             = var.enabled ? 1 : 0
-  name                              = var.resource_position_prefix ? format("postgresql-flexible-server-%s", local.name) : format("%s-postgresql-flexible-server", local.name)
+  name                              = var.resource_position_prefix ? format("pgsql-fs-%s", local.name) : format("%s-pgsql-fs", local.name)
   resource_group_name               = var.resource_group_name
   location                          = var.location
   administrator_login               = var.admin_username
@@ -69,13 +69,11 @@ resource "azurerm_postgresql_flexible_server" "main" {
 
   dynamic "authentication" {
     for_each = var.enabled && var.active_directory_auth_enabled ? [1] : [0]
-
     content {
       active_directory_auth_enabled = var.active_directory_auth_enabled
       tenant_id                     = data.azurerm_client_config.current.tenant_id
     }
   }
-
 
   dynamic "identity" {
     for_each = var.cmk_encryption_enabled ? [1] : []
@@ -88,7 +86,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   dynamic "customer_managed_key" {
     for_each = var.cmk_encryption_enabled ? [1] : []
     content {
-      key_vault_key_id                     = azurerm_key_vault_key.kvkey[0].id
+      key_vault_key_id                     = azurerm_key_vault_key.main[0].id
       primary_user_assigned_identity_id    = azurerm_user_assigned_identity.identity[0].id
       geo_backup_key_vault_key_id          = var.geo_redundant_backup_enabled ? var.geo_backup_key_vault_key_id : null
       geo_backup_user_assigned_identity_id = var.geo_redundant_backup_enabled ? var.geo_backup_user_assigned_identity_id : null
@@ -100,20 +98,23 @@ resource "azurerm_postgresql_flexible_server" "main" {
   }
 }
 
+##-----------------------------------------------------------------------------
+## Below resource will create PostgreSQL server Active Directory administrator.
+##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server_active_directory_administrator" "main" {
   count               = var.enabled && var.active_directory_auth_enabled ? 1 : 0
   server_name         = azurerm_postgresql_flexible_server.main[0].name
   resource_group_name = var.resource_group_name
   tenant_id           = var.tenant_id
   object_id           = var.object_id
-  principal_name      = var.display_name
+  principal_name      = var.principal_name
   principal_type      = var.principal_type
 }
 
 ##----------------------------------------------------------------------------- 
 ## Below resource will create key vault key that will be used for encryption.  
 ##-----------------------------------------------------------------------------
-resource "azurerm_key_vault_key" "kvkey" {
+resource "azurerm_key_vault_key" "main" {
   depends_on      = [azurerm_role_assignment.identity_assigned, azurerm_role_assignment.rbac_keyvault_crypto_officer]
   count           = var.enabled && var.cmk_encryption_enabled ? 1 : 0
   name            = var.resource_position_prefix ? format("pgsql-kv-key-%s", local.name) : format("%s-pgsql-kv-key", local.name)
@@ -138,7 +139,7 @@ resource "azurerm_key_vault_key" "kvkey" {
 ##----------------------------------------------------------------------------- 
 ## Below resource will create Firewall rules for Public server.
 ##-----------------------------------------------------------------------------
-resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rules" {
+resource "azurerm_postgresql_flexible_server_firewall_rule" "main" {
   for_each = var.enabled && var.public_network_access_enabled ? var.allowed_cidrs : {}
 
   name             = each.key
@@ -167,7 +168,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "main" {
   depends_on = [azurerm_postgresql_flexible_server.main]
 }
 
-resource "azurerm_monitor_diagnostic_setting" "postgresql" {
+resource "azurerm_monitor_diagnostic_setting" "main" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
   name                           = var.resource_position_prefix ? format("pgsql-diag-log-%s", local.name) : format("%s-pgsql-diag-log", local.name)
   target_resource_id             = azurerm_postgresql_flexible_server.main[0].id

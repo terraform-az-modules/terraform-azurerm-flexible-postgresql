@@ -55,6 +55,7 @@ module "flexible-postgresql" {
   }
   public_network_access_enabled = true
   allowed_cidrs = {
+    # WARNING: This allows access from any IP address. For production, restrict this to known IPs.
     "allowed_all_ip"      = "0.0.0.0/0"
     "allowed_specific_ip" = "11.32.16.78/32"
   }

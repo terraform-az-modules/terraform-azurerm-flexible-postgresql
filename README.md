@@ -23,16 +23,16 @@
 </p>
 <p align="center">
 
-<a href='https://facebook.com/sharer/sharer.php?u=https://github.com/terraform-az-modules/terraform-azure-vnet-peering'>
+<a href='https://facebook.com/sharer/sharer.php?u=https://github.com/terraform-az-modules/terraform-azure-flexible-postgresql'>
   <img title="Share on Facebook" src="https://user-images.githubusercontent.com/50652676/62817743-4f64cb80-bb59-11e9-90c7-b057252ded50.png" />
 </a>
 <a href='https://www.instagram.com/cloud_drove?igsh=cHJqaDY3bGtnYmh3' title="Follow On Instagram">
   <img src="https://github.com/gauravghongde/social-icons/blob/master/SVG/Color/Instagram.svg" width="23" height="23" />
 </a>
-<a href='https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Module+Template&url=https://github.com/terraform-az-modules/terraform-azure-vnet-peering'>
+<a href='https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Module+Template&url=https://github.com/terraform-az-modules/terraform-azure-flexible-postgresql'>
   <img title="Share on LinkedIn" src="https://user-images.githubusercontent.com/50652676/62817742-4e339e80-bb59-11e9-87b9-a1f68cae1049.png" />
 </a>
-<a href='https://twitter.com/intent/tweet/?text=Terraform+Module+Template&url=https://github.com/terraform-az-modules/terraform-azure-vnet-peering'>
+<a href='https://twitter.com/intent/tweet/?text=Terraform+Module+Template&url=https://github.com/terraform-az-modules/terraform-azure-flexible-postgresql'>
   <img title="Share on X" src="https://github.com/user-attachments/assets/140b9ae7-816b-4fd5-ac3f-378afa0f1dd5" />
 </a>
 
@@ -56,7 +56,7 @@ This table contains both Prerequisites and Providers:
 |:-------------:|:-------------------------------------------:|:---------:|
 | **Prerequisite** | [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) | >= 1.6.6 |
 | **Provider** | [azure](https://azure.microsoft.com/) | >= 3.116.0 |
-| **Provider** | [random](https://azure.microsoft.com/) | >= 3.116.0 |
+| **Provider** | [random](https://registry.terraform.io/providers/hashicorp/random/latest) | >= 3.0.0 |
 
 
 
@@ -80,7 +80,7 @@ This table contains both Prerequisites and Providers:
 
 | Name | Type |
 |------|------|
-| [azurerm_key_vault_key.kvkey](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key) | resource |
+| [azurerm_key_vault_key.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key) | resource |
 | [azurerm_monitor_diagnostic_setting.postgresql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
 | [azurerm_postgresql_flexible_server.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | resource |
 | [azurerm_postgresql_flexible_server_configuration.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | resource |
@@ -113,7 +113,7 @@ This table contains both Prerequisites and Providers:
 | <a name="input_collation"></a> [collation](#input\_collation) | Specifies the Collation for the PostgreSQL Database, which needs to be a valid PostgreSQL Collation. Changing this forces a new resource to be created. | `string` | `"en_US.utf8"` | no |
 | <a name="input_create_mode"></a> [create\_mode](#input\_create\_mode) | The creation mode. Can be used to restore or replicate existing servers. Possible values are `Default`, `Replica`, `GeoRestore`, and `PointInTimeRestore`. Defaults to `Default` | `string` | `"Default"` | no |
 | <a name="input_custom_name"></a> [custom\_name](#input\_custom\_name) | Override the default naming convention. | `string` | `null` | no |
-| <a name="input_database_names"></a> [database\_names](#input\_database\_names) | Specifies the name of the MySQL Database, which needs to be a valid MySQL identifier. Changing this forces a new resource to be created. | `list(string)` | <pre>[<br>  "maindb"<br>]</pre> | no |
+| <a name="input_database_names"></a> [database_names](#input_database_names) | Specifies the name of the PostgreSQL Database, which needs to be a valid PostgreSQL identifier. Changing this forces a new resource to be created. | `list(string)` | <pre>[<br>  "maindb"<br>]</pre> | no |
 | <a name="input_delegated_subnet_id"></a> [delegated\_subnet\_id](#input\_delegated\_subnet\_id) | The resource ID of the subnet | `string` | `null` | no |
 | <a name="input_enable_diagnostic"></a> [enable\_diagnostic](#input\_enable\_diagnostic) | Flag to control creation of diagnostic settings. | `bool` | `true` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources. | `bool` | `true` | no |
@@ -145,7 +145,7 @@ This table contains both Prerequisites and Providers:
 | <a name="input_metric_enabled"></a> [metric\_enabled](#input\_metric\_enabled) | Whether metric diagnonsis should be enable in diagnostic settings for flexible Mysql. | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name  (e.g. `app` or `cluster`). | `string` | `""` | no |
 | <a name="input_point_in_time_restore_time_in_utc"></a> [point\_in\_time\_restore\_time\_in\_utc](#input\_point\_in\_time\_restore\_time\_in\_utc) | The point in time to restore from creation\_source\_server\_id when create\_mode is PointInTimeRestore. Changing this forces a new PostgreSQL Flexible Server to be created. | `string` | `null` | no |
-| <a name="input_postgresql_version"></a> [postgresql\_version](#input\_postgresql\_version) | The version of the PostgreSQL Flexible Server to use. Possible values are 5.7, and 8.0.21. Changing this forces a new PostgreSQL Flexible Server to be created. | `string` | `"5.7"` | no |
+| <a name="input_postgresql_version"></a> [postgresql_version](#input_postgresql_version) | The version of the PostgreSQL Flexible Server to use. Possible values are 11, 12, 13, 14, 15, 16. Changing this forces a new PostgreSQL Flexible Server to be created. | `string` | `"16"` | no |
 | <a name="input_principal_name"></a> [principal\_name](#input\_principal\_name) | The name of Azure Active Directory principal. | `string` | `null` | no |
 | <a name="input_principal_type"></a> [principal\_type](#input\_principal\_type) | Set the principal type, defaults to ServicePrincipal. The type of Azure Active Directory principal. Possible values are Group, ServicePrincipal and User. Changing this forces a new resource to be created. | `string` | `"Group"` | no |
 | <a name="input_private_dns"></a> [private\_dns](#input\_private\_dns) | n/a | `bool` | `false` | no |

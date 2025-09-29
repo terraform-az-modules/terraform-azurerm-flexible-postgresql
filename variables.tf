@@ -154,20 +154,20 @@ variable "geo_backup_user_assigned_identity_id" {
 
 variable "postgresql_version" {
   type        = string
-  default     = "5.7"
-  description = "The version of the PostgreSQL Flexible Server to use. Possible values are 5.7, and 8.0.21. Changing this forces a new PostgreSQL Flexible Server to be created."
+  default     = "16"
+  description = "The version of the PostgreSQL Flexible Server to use. Supported versions include 11, 12, 13, 14, 15, 16. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
 variable "zone" {
   type        = number
-  default     = "1"
+  default     = 1
   description = "Specifies the Availability Zone in which this PostgreSQL Flexible Server should be located. Possible values are 1, 2 and 3."
 }
 
 variable "point_in_time_restore_time_in_utc" {
   type        = string
   default     = null
-  description = " The point in time to restore from creation_source_server_id when create_mode is PointInTimeRestore. Changing this forces a new PostgreSQL Flexible Server to be created."
+  description = "The point in time to restore from creation_source_server_id when create_mode is PointInTimeRestore. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
 variable "source_server_id" {
@@ -343,31 +343,19 @@ variable "principal_name" {
 variable "principal_type" {
   type        = string
   default     = null
-  description = "The name of Azure Active Directory principal."
+  description = "Azure Active Directory principal type."
 }
 
 variable "object_id" {
   type        = string
   default     = null
-  description = "The name of Azure Active Directory principal."
+  description = "The object ID of the Azure Active Directory principal."
 }
 
 variable "tenant_id" {
   type        = string
   default     = null
-  description = "The name of Azure Active Directory principal."
-}
-
-variable "display_name" {
-  type        = string
-  default     = null
-  description = "The name of Azure Active Directory principal."
-}
-
-variable "enable_active_directory" {
-  type        = bool
-  default     = false
-  description = "To attach entra"
+  description = "The tenant ID of the Azure Active Directory instance."
 }
 
 variable "public_network_access_enabled" {

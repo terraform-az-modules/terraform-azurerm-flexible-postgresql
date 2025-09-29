@@ -56,7 +56,7 @@ usage: |-
     #**************************server configuration***************************
     postgresql_version = "16"
     admin_username     = "postgresqlusername"
-    admin_password     = "ba5yatgfgfhdsv6A3ns2lu4gqzzc" # Null value will generate random password and added to tfstate file.
+    admin_password     =  null # Null value will generate random password and added to tfstate file.
     tier               = "Burstable"
     size               = "B1ms"
     database_names     = ["maindb"]
@@ -84,7 +84,4 @@ usage: |-
     key_vault_id           = module.vault.id
     admin_objects_ids      = [data.azurerm_client_config.current_client_config.object_id]
   }
-
-
-  
     ```

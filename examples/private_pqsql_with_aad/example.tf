@@ -158,11 +158,10 @@ module "flexible-postgresql" {
   }
   # provide the required values to attach aad group
   active_directory_auth_enabled = true
-  principal_name                = ""
-  principal_type                = ""
-  tenant_id                     = ""
-  object_id                     = ""
-  display_name                  = ""
+  principal_name                = "<AAD-PRINCIPAL-NAME>" # e.g., an AAD group name
+  principal_type                = "Group"                # or "User", "ServicePrincipal"
+  tenant_id                     = "<YOUR-TENANT-ID>"
+  object_id                     = "<PRINCIPAL-OBJECT-ID>"
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
   existing_private_dns_zone_id = module.private_dns.private_dns_zone_ids.postgresql_server
