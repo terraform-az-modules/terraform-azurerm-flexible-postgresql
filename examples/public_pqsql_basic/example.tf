@@ -2,8 +2,6 @@ provider "azurerm" {
   features {}
 }
 
-data "azurerm_client_config" "current_client_config" {}
-
 ##-----------------------------------------------------------------------------
 ## Resource Group module call
 ## Resource group in which all resources will be deployed.
@@ -12,8 +10,8 @@ module "resource_group" {
   source      = "terraform-az-modules/resource-group/azure"
   version     = "1.0.0"
   name        = "core"
-  environment = "devdas"
-  location    = "centralus"
+  environment = "dev"
+  location    = "centralindia"
   label_order = ["name", "environment", "location"]
 }
 

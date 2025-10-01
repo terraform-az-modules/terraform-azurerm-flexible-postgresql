@@ -16,7 +16,7 @@ module "resource_group" {
   version     = "1.0.0"
   name        = "core"
   environment = "dev"
-  location    = "centralus"
+  location    = "centralindia"
   label_order = ["name", "environment", "location"]
 }
 
@@ -89,8 +89,8 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azure"
   version                       = "1.0.0"
-  name                          = "corejan"
-  environment                   = "devjan"
+  name                          = "core"
+  environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
   location                      = module.resource_group.resource_group_location
@@ -120,8 +120,8 @@ module "private_dns" {
   source              = "terraform-az-modules/private-dns/azure"
   version             = "1.0.0"
   location            = module.resource_group.resource_group_location
-  name                = "dnssse"
-  environment         = "devdas"
+  name                = "core"
+  environment         = "dev"
   resource_group_name = module.resource_group.resource_group_name
   private_dns_config = [
     {
@@ -158,7 +158,6 @@ module "flexible-postgresql" {
   }
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
-  # active_directory_auth_enabled = true
   existing_private_dns_zone_id = module.private_dns.private_dns_zone_ids.postgresql_server
   delegated_subnet_id          = module.subnet.subnet_ids.subnet1
   log_analytics_workspace_id   = module.log-analytics.workspace_id
