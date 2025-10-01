@@ -128,7 +128,7 @@ This table contains both Prerequisites and Providers:
 | <a name="input_geo_backup_key_vault_key_id"></a> [geo\_backup\_key\_vault\_key\_id](#input\_geo\_backup\_key\_vault\_key\_id) | Key-vault key id to encrypt the geo redundant backup | `string` | `null` | no |
 | <a name="input_geo_backup_user_assigned_identity_id"></a> [geo\_backup\_user\_assigned\_identity\_id](#input\_geo\_backup\_user\_assigned\_identity\_id) | User assigned identity id to encrypt the geo redundant backup | `string` | `null` | no |
 | <a name="input_geo_redundant_backup_enabled"></a> [geo\_redundant\_backup\_enabled](#input\_geo\_redundant\_backup\_enabled) | Should geo redundant backup enabled? Defaults to false. Changing this forces a new PostgreSQL Flexible Server to be created. | `bool` | `false` | no |
-| <a name="input_high_availability"></a> [high\_availability](#input\_high\_availability) | Map of high availability configuration: https://docs.microsoft.com/en-us/azure/mysql/flexible-server/concepts-high-availability. `null` to disable high availability | <pre>object({<br>    standby_availability_zone = optional(number)<br>  })</pre> | <pre>{<br>  "standby_availability_zone": 1<br>}</pre> | no |
+| <a name="input_high_availability"></a> [high\_availability](#input\_high\_availability) | Map of high availability configuration: https://docs.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-high-availability. `null` to disable high availability | <pre>object({<br>    standby_availability_zone = optional(number)<br>  })</pre> | <pre>{<br>  "standby_availability_zone": 1<br>}</pre> | no |
 | <a name="input_key_opts"></a> [key\_opts](#input\_key\_opts) | List of permitted key operations for CMK. | `list(string)` | <pre>[<br>  "encrypt",<br>  "decrypt",<br>  "sign",<br>  "verify",<br>  "wrapKey",<br>  "unwrapKey"<br>]</pre> | no |
 | <a name="input_key_size"></a> [key\_size](#input\_key\_size) | Key size for CMK encryption. | `number` | `2048` | no |
 | <a name="input_key_type"></a> [key\_type](#input\_key\_type) | Key type for CMK encryption ('RSA' by default). | `string` | `"RSA-HSM"` | no |
@@ -140,9 +140,9 @@ This table contains both Prerequisites and Providers:
 | <a name="input_log_category"></a> [log\_category](#input\_log\_category) | Categories of logs to be recorded in diagnostic setting. Acceptable values are PostgreSQLFlexDatabaseXacts, PostgreSQLFlexQueryStoreRuntime, PostgreSQLFlexQueryStoreWaitStats ,PostgreSQLFlexSessions, PostgreSQLFlexTableStats, PostgreSQLLogs | `list(string)` | `[]` | no |
 | <a name="input_log_category_group"></a> [log\_category\_group](#input\_log\_category\_group) | Log category group for diagnostic settings. | `list(string)` | <pre>[<br>  "audit"<br>]</pre> | no |
 | <a name="input_main_rg_name"></a> [main\_rg\_name](#input\_main\_rg\_name) | n/a | `string` | `""` | no |
-| <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | Map of maintenance window configuration: https://docs.microsoft.com/en-us/azure/mysql/flexible-server/concepts-maintenance | `map(number)` | `null` | no |
+| <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | Map of maintenance window configuration: https://docs.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-maintenance | `map(number)` | `null` | no |
 | <a name="input_managedby"></a> [managedby](#input\_managedby) | ManagedBy, eg ''. | `string` | `""` | no |
-| <a name="input_metric_enabled"></a> [metric\_enabled](#input\_metric\_enabled) | Whether metric diagnonsis should be enable in diagnostic settings for flexible Mysql. | `bool` | `true` | no |
+| <a name="input_metric_enabled"></a> [metric\_enabled](#input\_metric\_enabled) | Whether metric diagnonsis should be enable in diagnostic settings for flexible Postgresql. | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name  (e.g. `app` or `cluster`). | `string` | `""` | no |
 | <a name="input_point_in_time_restore_time_in_utc"></a> [point\_in\_time\_restore\_time\_in\_utc](#input\_point\_in\_time\_restore\_time\_in\_utc) | The point in time to restore from creation\_source\_server\_id when create\_mode is PointInTimeRestore. Changing this forces a new PostgreSQL Flexible Server to be created. | `string` | `null` | no |
 | <a name="input_postgresql_version"></a> [postgresql_version](#input_postgresql_version) | The version of the PostgreSQL Flexible Server to use. Possible values are 11, 12, 13, 14, 15, 16. Changing this forces a new PostgreSQL Flexible Server to be created. | `string` | `"16"` | no |
@@ -172,7 +172,7 @@ This table contains both Prerequisites and Providers:
 | Name | Description |
 |------|-------------|
 | <a name="output_postgresql_flexible_server_id"></a> [postgresql\_flexible\_server\_id](#output\_postgresql\_flexible\_server\_id) | The ID of the PostgreSQL Flexible Server. |
-| <a name="output_postgresql_flexible_server_name"></a> [postgresql\_flexible\_server\_name](#output\_postgresql\_flexible\_server\_name) | The Name of the MySQL Flexible Server. |
+| <a name="output_postgresql_flexible_server_name"></a> [postgresql\_flexible\_server\_name](#output\_postgresql\_flexible\_server\_name) | The Name of the PostgreSQL Flexible Server. |
 
 <!-- 
 ## Module Dependencies

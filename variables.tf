@@ -183,8 +183,9 @@ variable "key_vault_id" {
 }
 
 variable "private_dns" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
+  description = "For enabling the private dns"
 }
 
 variable "location" {
@@ -224,7 +225,7 @@ variable "collation" {
 }
 
 variable "high_availability" {
-  description = "Map of high availability configuration: https://docs.microsoft.com/en-us/azure/mysql/flexible-server/concepts-high-availability. `null` to disable high availability"
+  description = "Map of high availability configuration: https://docs.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-high-availability. `null` to disable high availability"
   type = object({
     standby_availability_zone = optional(number)
   })
@@ -390,6 +391,24 @@ variable "key_size" {
   type        = number
   default     = 2048
   description = "Key size for CMK encryption."
+}
+
+variable "min_upper" {
+  type        = number
+  default     = 4
+  description = "Minimum number of uppercase characters"
+}
+
+variable "min_lower" {
+  type        = number
+  default     = 2
+  description = "Minimum number of lowercase characters"
+}
+
+variable "min_numeric" {
+  type        = number
+  default     = 4
+  description = "Minimum number of numeric characters"
 }
 
 variable "special" {

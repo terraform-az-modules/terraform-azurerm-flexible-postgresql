@@ -5,9 +5,9 @@
 resource "random_password" "main" {
   count       = var.enabled && var.admin_password == null ? 1 : 0
   length      = var.admin_password_length
-  min_upper   = 4
-  min_lower   = 2
-  min_numeric = 4
+  min_upper   = var.min_upper
+  min_lower   = var.min_lower
+  min_numeric = var.min_numeric
   special     = var.special
 }
 
@@ -50,7 +50,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   zone                              = var.zone
   tags                              = module.labels.tags
   dynamic "high_availability" {
-    for_each = toset(var.high_availability != null && var.tier != "Burstable" ? [var.high_availability] : [])
+    for_each = toset(var.high_availability != null && var.tier != "GeneralPurpose" ? [var.high_availability] : [])
 
     content {
       mode                      = "ZoneRedundant"
