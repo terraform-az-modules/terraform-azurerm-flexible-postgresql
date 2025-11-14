@@ -7,8 +7,8 @@ provider "azurerm" {
 ## Resource group in which all resources will be deployed.
 ##-----------------------------------------------------------------------------
 module "resource_group" {
-  source      = "terraform-az-modules/resource-group/azure"
-  version     = "1.0.0"
+  source      = "terraform-az-modules/resource-group/azurerm"
+  version     = "1.0.3"
   name        = "core"
   environment = "dev"
   location    = "centralindia"
@@ -19,8 +19,8 @@ module "resource_group" {
 # Log Analytics
 # ------------------------------------------------------------------------------
 module "log-analytics" {
-  source                      = "terraform-az-modules/log-analytics/azure"
-  version                     = "1.0.0"
+  source                      = "terraform-az-modules/log-analytics/azurerm"
+  version                     = "1.0.2"
   name                        = "core"
   environment                 = "dev"
   label_order                 = ["name", "environment", "location"]
@@ -43,20 +43,21 @@ module "flexible-postgresql" {
   #server configuration
   postgresql_version = "16"
   admin_username     = "postgresqlusername"
-  admin_password     = null # Null value will generate random password and added to tfstate file.
-  tier               = "Burstable"
-  size               = "B1ms"
+  admin_password     = "test_password" # Null value will generate random password and added to tfstate file.
+  sku_name           = "GP_Standard_D8ds_v4"
   database_names     = ["maindb"]
   high_availability = {
-    mode                      = "ZoneRedundant"
-    standby_availability_zone = 2
+    mode = "SameZone"
+    # standby_availability_zone = 1
   }
   public_network_access_enabled = true
-  allowed_cidrs = {
-    # WARNING: This allows access from any IP address. For production, restrict this to known IPs.
-    "allowed_all_ip"      = "0.0.0.0/0"
-    "allowed_specific_ip" = "11.32.16.78/32"
-  }
+
   log_analytics_workspace_id = module.log-analytics.workspace_id
-  cmk_encryption_enabled     = false
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_specific_ip" {
+  name             = "allow-specific-ip"
+  server_id        = module.flexible-postgresql.postgresql_flexible_server_id
+  start_ip_address = "11.32.16.78" #replace it with you ip range 
+  end_ip_address   = "11.32.16.78" #replace it with you ip range
 }

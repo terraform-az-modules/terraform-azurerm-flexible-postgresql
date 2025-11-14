@@ -12,8 +12,8 @@ data "azurerm_client_config" "current_client_config" {}
 ## Resource group in which all resources will be deployed.
 ##-----------------------------------------------------------------------------
 module "resource_group" {
-  source      = "terraform-az-modules/resource-group/azure"
-  version     = "1.0.0"
+  source      = "terraform-az-modules/resource-group/azurerm"
+  version     = "1.0.3"
   name        = "core"
   environment = "dev"
   location    = "centralindia"
@@ -24,8 +24,8 @@ module "resource_group" {
 # Virtual Network
 # ------------------------------------------------------------------------------
 module "vnet" {
-  source              = "terraform-az-modules/vnet/azure"
-  version             = "1.0.0"
+  source              = "terraform-az-modules/vnet/azurerm"
+  version             = "1.0.3"
   name                = "core"
   environment         = "dev"
   label_order         = ["name", "environment", "location"]
@@ -38,8 +38,8 @@ module "vnet" {
 # Subnet
 # ------------------------------------------------------------------------------
 module "subnet" {
-  source               = "terraform-az-modules/subnet/azure"
-  version              = "1.0.0"
+  source               = "terraform-az-modules/subnet/azurerm"
+  version              = "1.0.1"
   environment          = "dev"
   label_order          = ["name", "environment", "location"]
   resource_group_name  = module.resource_group.resource_group_name
@@ -72,8 +72,8 @@ module "subnet" {
 # Log Analytics
 # ------------------------------------------------------------------------------
 module "log-analytics" {
-  source                      = "terraform-az-modules/log-analytics/azure"
-  version                     = "1.0.0"
+  source                      = "terraform-az-modules/log-analytics/azurerm"
+  version                     = "1.0.2"
   name                        = "core"
   environment                 = "dev"
   label_order                 = ["name", "environment", "location"]
@@ -87,8 +87,8 @@ module "log-analytics" {
 # Key Vault
 # ------------------------------------------------------------------------------
 module "vault" {
-  source                        = "terraform-az-modules/key-vault/azure"
-  version                       = "1.0.0"
+  source                        = "terraform-az-modules/key-vault/azurerm"
+  version                       = "1.0.1"
   name                          = "core"
   environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
@@ -96,7 +96,7 @@ module "vault" {
   location                      = module.resource_group.resource_group_location
   subnet_id                     = module.subnet.subnet_ids.subnet2
   public_network_access_enabled = true
-  sku_name                      = "premium"
+  sku_name                      = "standard"
   private_dns_zone_ids          = module.private_dns.private_dns_zone_ids.key_vault
   network_acls = {
     bypass         = "AzureServices"
@@ -117,8 +117,8 @@ module "vault" {
 ## Private DNS Zone module call
 ##-----------------------------------------------------------------------------
 module "private_dns" {
-  source              = "terraform-az-modules/private-dns/azure"
-  version             = "1.0.0"
+  source              = "terraform-az-modules/private-dns/azurerm"
+  version             = "1.0.2"
   location            = module.resource_group.resource_group_location
   name                = "core"
   environment         = "dev"
@@ -134,7 +134,6 @@ module "private_dns" {
     }
   ]
 }
-
 # ------------------------------------------------------------------------------
 # Flexible Postgresql
 # ------------------------------------------------------------------------------
@@ -142,27 +141,30 @@ module "flexible-postgresql" {
   depends_on          = [module.resource_group, module.vnet, module.private_dns]
   source              = "../.."
   name                = "core"
-  environment         = "test"
+  environment         = "dev"
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.resource_group_location
   #server configuration
   postgresql_version = "16"
   admin_username     = "postgresqlusername"
-  admin_password     = null # Null value will generate random password and added to tfstate file.
-  tier               = "Burstable"
-  size               = "B1ms"
+  admin_password     = "test_password" # Null value will generate random password and added to tfstate file.
+  sku_name           = "GP_Standard_D8ds_v4"
   database_names     = ["maindb"]
   high_availability = {
-    mode                      = "ZoneRedundant"
-    standby_availability_zone = 2
+    mode = "SameZone"
+    # standby_availability_zone = 1
   }
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
-  existing_private_dns_zone_id = module.private_dns.private_dns_zone_ids.postgresql_server
-  delegated_subnet_id          = module.subnet.subnet_ids.subnet1
-  log_analytics_workspace_id   = module.log-analytics.workspace_id
+  log_analytics_workspace_id = module.log-analytics.workspace_id
   # Database encryption with costumer manage keys
-  cmk_encryption_enabled = true
-  key_vault_id           = module.vault.id
-  admin_objects_ids      = [data.azurerm_client_config.current_client_config.object_id]
+  cmk_encryption_enabled        = false
+  key_vault_id                  = module.vault.id
+  admin_objects_ids             = [data.azurerm_client_config.current_client_config.object_id]
+  active_directory_auth_enabled = false
+
+  enable_private_endpoint = false
+  private_dns_zone_ids    = module.private_dns.private_dns_zone_ids.postgresql_server
+  delegated_subnet_id     = module.subnet.subnet_ids.subnet1
+
 }

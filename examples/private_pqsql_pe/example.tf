@@ -120,7 +120,7 @@ module "private_dns" {
   source              = "terraform-az-modules/private-dns/azurerm"
   version             = "1.0.2"
   location            = module.resource_group.resource_group_location
-  name                = "dns"
+  name                = "core"
   environment         = "dev"
   resource_group_name = module.resource_group.resource_group_name
   private_dns_config = [
@@ -139,7 +139,7 @@ module "private_dns" {
 # Flexible Postgresql
 # ------------------------------------------------------------------------------
 module "flexible-postgresql" {
-  depends_on          = [module.resource_group, module.vnet, module.private_dns]
+  depends_on          = [module.resource_group, module.vnet]
   source              = "../.."
   name                = "core"
   environment         = "dev"
@@ -155,17 +155,17 @@ module "flexible-postgresql" {
     mode = "SameZone"
     # standby_availability_zone = 1
   }
-  # provide the required values to attach aad group
-  active_directory_auth_enabled = true
-  principal_name                = "testing"          # e.g., an AAD group name
-  principal_type                = "ServicePrincipal" # or "User", "ServicePrincipal"
+  public_network_access_enabled = false
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
-  private_dns_zone_ids       = module.private_dns.private_dns_zone_ids.postgresql_server
-  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
   log_analytics_workspace_id = module.log-analytics.workspace_id
   # Database encryption with costumer manage keys
-  cmk_encryption_enabled = false
+  cmk_encryption_enabled = true
   key_vault_id           = module.vault.id
   admin_objects_ids      = [data.azurerm_client_config.current_client_config.object_id]
+
+  enable_private_endpoint    = true
+  private_endpoint_subnet_id = module.subnet.subnet_ids.subnet2
+  private_dns_zone_ids       = module.private_dns.private_dns_zone_ids.postgresql_server
+
 }

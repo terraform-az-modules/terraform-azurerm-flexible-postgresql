@@ -20,9 +20,7 @@ Maintains naming consistency based on organizational preferences.
 EOT
 }
 
-##-----------------------------------------------------------------------------
-## Labels
-##-----------------------------------------------------------------------------
+#Description : Terraform label module variables.
 variable "name" {
   type        = string
   default     = ""
@@ -41,27 +39,33 @@ variable "repository" {
   description = "Terraform current module repo"
 }
 
-variable "extra_tags" {
-  type        = map(string)
-  default     = {}
-  description = "Additional tags (e.g. map(`BusinessUnit`,`XYZ`)."
-}
-
 variable "label_order" {
   type        = list(any)
-  default     = ["name", "environment"]
+  default     = []
   description = "Label order, e.g. sequence of application name and environment `name`,`environment`,'attribute' [`webserver`,`qa`,`devops`,`public`,] ."
 }
 
 variable "managedby" {
   type        = string
-  default     = ""
-  description = "ManagedBy, eg ''."
+  default     = "Terraform"
+  description = "ManagedBy, eg: `Terraform`, `Ansible`, `CloudFormation`."
+}
+
+variable "deployment_mode" {
+  type        = string
+  default     = "terraform"
+  description = "Specifies how the infrastructure/resource is deployed"
+}
+
+variable "extra_tags" {
+  type        = map(string)
+  default     = null
+  description = "Variable to pass extra tags."
 }
 
 variable "resource_group_name" {
   type        = string
-  default     = ""
+  default     = "pgsql-rg"
   description = "A container that holds related resources for an Azure solution"
 }
 
@@ -71,61 +75,43 @@ variable "enabled" {
   description = "Set to false to prevent the module from creating any resources."
 }
 
-variable "deployment_mode" {
-  type        = string
-  default     = "terraform"
-  description = "Specifies how the infrastructure/resource is deployed"
+variable "enable_private_endpoint" {
+  type        = bool
+  default     = false
+  description = "Manages a Private Endpoint to Azure database for PostgreSQL"
+
 }
 
-##-----------------------------------------------------------------------------
-## azurerm_postgresql_flexible_server
-##-----------------------------------------------------------------------------
+###########azurerm_postgresql_flexible_server######
+
 variable "admin_username" {
   type        = string
   default     = null
   description = "The administrator login name for the new SQL Server"
 }
 
-variable "admin_password_length" {
-  type        = number
-  default     = 16
-  description = "Length of random password generated."
-}
-
 variable "admin_password" {
   type        = string
-  description = "The password associated with the admin_username user"
   default     = null
+  description = "The password associated with the admin_username user"
 }
 
 variable "backup_retention_days" {
   type        = number
-  default     = 7
+  default     = 30
   description = "The backup retention days for the PostgreSQL Flexible Server. Possible values are between 1 and 35 days. Defaults to 7"
 }
 
 variable "delegated_subnet_id" {
+  description = "The resource ID of the subnet"
   type        = string
   default     = null
-  description = "The resource ID of the subnet"
 }
 
-variable "allowed_cidrs" {
-  type        = map(string)
-  default     = {}
-  description = "Map of authorized cidrs to connect database"
-}
-
-variable "tier" {
-  description = "Tier for PostgreSQL Flexible server sku : https://docs.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage. Possible values are: GeneralPurpose, Burstable, MemoryOptimized."
+variable "sku_name" {
   type        = string
-  default     = "GeneralPurpose"
-}
-
-variable "size" {
-  description = "Size for PostgreSQL Flexible server sku : https://docs.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-compute-storage."
-  type        = string
-  default     = "D2ds_v4"
+  default     = "GP_Standard_D8ds_v4"
+  description = " The SKU Name for the PostgreSQL Flexible Server."
 }
 
 variable "create_mode" {
@@ -140,22 +126,10 @@ variable "geo_redundant_backup_enabled" {
   description = "Should geo redundant backup enabled? Defaults to false. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
-variable "geo_backup_key_vault_key_id" {
-  type        = string
-  default     = null
-  description = "Key-vault key id to encrypt the geo redundant backup"
-}
-
-variable "geo_backup_user_assigned_identity_id" {
-  type        = string
-  default     = null
-  description = "User assigned identity id to encrypt the geo redundant backup"
-}
-
 variable "postgresql_version" {
   type        = string
   default     = "16"
-  description = "The version of the PostgreSQL Flexible Server to use. Supported versions include 11, 12, 13, 14, 15, 16. Changing this forces a new PostgreSQL Flexible Server to be created."
+  description = "The version of the PostgreSQL Flexible Server to use. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
 variable "zone" {
@@ -167,7 +141,25 @@ variable "zone" {
 variable "point_in_time_restore_time_in_utc" {
   type        = string
   default     = null
-  description = "The point in time to restore from creation_source_server_id when create_mode is PointInTimeRestore. Changing this forces a new PostgreSQL Flexible Server to be created."
+  description = " The point in time to restore from creation_source_server_id when create_mode is PointInTimeRestore. Changing this forces a new PostgreSQL Flexible Server to be created."
+}
+
+variable "maintenance_window_day_of_week" {
+  type        = number
+  default     = 2
+  description = "The day of the week for the maintenance window, where the week starts on a Sunday, i.e. Sunday = 0, Monday = 1"
+}
+
+variable "maintenance_window_start_hour" {
+  type        = number
+  default     = 6
+  description = "The start hour for the maintenance window, in UTC"
+}
+
+variable "maintenance_window_start_minute" {
+  type        = number
+  default     = 0
+  description = "The start minute for the maintenance window"
 }
 
 variable "source_server_id" {
@@ -176,16 +168,22 @@ variable "source_server_id" {
   description = "The resource ID of the source PostgreSQL Flexible Server to be restored. Required when create_mode is PointInTimeRestore, GeoRestore, and Replica. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
+variable "public_network_access_enabled" {
+  type        = bool
+  default     = false
+  description = "Defines whether public access is allowed."
+}
+
+variable "key_vault_key_id" {
+  type        = string
+  default     = null
+  description = "The URL to a Key Vault Key"
+}
+
 variable "key_vault_id" {
   type        = string
   default     = ""
   description = "Specifies the URL to a Key Vault Key (either from a Key Vault Key, or the Key URL for the Key Vault Secret"
-}
-
-variable "private_dns" {
-  type        = bool
-  default     = false
-  description = "For enabling the private dns"
 }
 
 variable "location" {
@@ -194,10 +192,22 @@ variable "location" {
   description = "The Azure Region where the PostgreSQL Flexible Server should exist. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
-variable "existing_private_dns_zone_id" {
-  type        = string
-  default     = null
-  description = "For fetching the private dns zone id"
+variable "server_configuration_name" {
+  type = list(string)
+  default = [
+    "azure.extensions",
+    "pgaudit.log",
+  ]
+  description = "Specifies the name of the PostgreSQL Flexible Server Configuration, which needs to be a valid PostgreSQL configuration name. Changing this forces a new resource to be created."
+}
+
+variable "values" {
+  type = list(string)
+  default = [
+    "CUBE,CITEXT,BTREE_GIST,PGAUDIT",
+    "ALL",
+  ]
+  description = "Specifies the value of the PostgreSQL Flexible Server Configuration. See the PostgreSQL documentation for valid values. Changing this forces a new resource to be created."
 }
 
 variable "storage_mb" {
@@ -206,10 +216,10 @@ variable "storage_mb" {
   description = "The max storage allowed for the PostgreSQL Flexible Server. Possible values are 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, and 16777216."
 }
 
-variable "database_names" {
-  type        = list(string)
-  default     = ["maindb"]
-  description = "Specifies the name of the MySQL Database, which needs to be a valid MySQL identifier. Changing this forces a new resource to be created."
+variable "auto_grow_enabled" {
+  type        = bool
+  default     = false
+  description = "Is the storage auto grow for PostgreSQL Flexible Server enabled? Defaults to false"
 }
 
 variable "charset" {
@@ -225,18 +235,20 @@ variable "collation" {
 }
 
 variable "high_availability" {
-  description = "Map of high availability configuration: https://docs.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-high-availability. `null` to disable high availability"
+  description = "Map of high availability configuration: https://docs.microsoft.com/en-us/azure/mysql/flexible-server/concepts-high-availability. `null` to disable high availability"
   type = object({
+    mode                      = string
     standby_availability_zone = optional(number)
   })
   default = {
+    mode                      = "SameZone"
     standby_availability_zone = 1
   }
 }
 
 variable "enable_diagnostic" {
   type        = bool
-  default     = false
+  default     = true
   description = "Flag to control creation of diagnostic settings."
 }
 
@@ -291,48 +303,19 @@ variable "eventhub_authorization_rule_id" {
 
 variable "active_directory_auth_enabled" {
   type        = bool
-  default     = false
-  description = "Set to true to enable Active Directory Authentication"
+  default     = true
+  description = "Whether Active Directory authentication is allowed to access the PostgreSQL Flexible Server"
 }
 
-variable "maintenance_window" {
-  type        = map(number)
-  default     = null
-  description = "Map of maintenance window configuration: https://docs.microsoft.com/en-us/azure/mysql/flexible-server/concepts-maintenance"
-}
-
-variable "cmk_encryption_enabled" {
+variable "password_auth_enabled" {
   type        = bool
-  default     = false
-  description = "Enanle or Disable Database encryption with Customer Manage Key"
+  default     = true
+  description = "Whether password authentication is allowed to access the PostgreSQL Flexible Server"
 }
-
-variable "admin_objects_ids" {
-  description = "IDs of the objects that can do all operations on all keys, secrets and certificates."
-  type        = list(string)
-  default     = []
-}
-
-variable "expiration_date" {
+variable "principal_type" {
   type        = string
-  default     = "2034-05-22T18:29:59Z"
-  description = "Expiration UTC datetime (Y-m-d'T'H:M:S'Z')"
-}
-
-variable "rotation_policy" {
-  type = map(object({
-    time_before_expiry   = string
-    expire_after         = string
-    notify_before_expiry = string
-  }))
-  default     = null
-  description = "The rotation policy for azure key vault key"
-}
-
-variable "server_configurations" {
-  description = "PostgreSQL server configurations to add."
-  type        = map(string)
-  default     = {}
+  default     = "Group"
+  description = "Set the principal type, defaults to ServicePrincipal. The type of Azure Active Directory principal. Possible values are Group, ServicePrincipal and User. Changing this forces a new resource to be created."
 }
 
 variable "principal_name" {
@@ -341,78 +324,52 @@ variable "principal_name" {
   description = "The name of Azure Active Directory principal."
 }
 
-variable "principal_type" {
-  type        = string
-  default     = null
-  description = "Azure Active Directory principal type."
-}
-
-variable "object_id" {
-  type        = string
-  default     = null
-  description = "The object ID of the Azure Active Directory principal."
-}
-
-variable "tenant_id" {
-  type        = string
-  default     = null
-  description = "The tenant ID of the Azure Active Directory instance."
-}
-
-variable "public_network_access_enabled" {
+variable "maintenance_window_enabled" {
   type        = bool
   default     = false
-  description = "Enable public network access for the PostgreSQL Flexible Server"
+  description = "Enable maintenance window configuration on the PostgreSQL Flexible Server. Defaults to false"
 }
 
-variable "tier_map" {
-  type = map(string)
-  default = {
-    GeneralPurpose  = "GP"
-    Burstable       = "B"
-    MemoryOptimized = "MO"
-  }
-  description = "value"
-}
-
-variable "key_opts" {
+variable "database_names" {
   type        = list(string)
-  default     = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
-  description = "List of permitted key operations for CMK."
+  default     = []
+  description = "List of the names of the PostgreSQL Databases, which needs to be a valid PostgreSQL identifier. Changing this forces a new resource to be created."
+
 }
 
-variable "key_type" {
-  type        = string
-  default     = "RSA-HSM"
-  description = "Key type for CMK encryption ('RSA' by default)."
-}
-
-variable "key_size" {
-  type        = number
-  default     = 2048
-  description = "Key size for CMK encryption."
-}
-
-variable "min_upper" {
-  type        = number
-  default     = 4
-  description = "Minimum number of uppercase characters"
-}
-
-variable "min_lower" {
-  type        = number
-  default     = 2
-  description = "Minimum number of lowercase characters"
-}
-
-variable "min_numeric" {
-  type        = number
-  default     = 4
-  description = "Minimum number of numeric characters"
-}
-
-variable "special" {
+variable "cmk_encryption_enabled" {
   type        = bool
   default     = false
-  description = "this is to include special characters in random password"
+  description = "Enable customer-managed key (CMK) encryption for the PostgreSQL Flexible Server."
+}
+
+variable "admin_objects_ids" {
+  type        = list(string)
+  default     = []
+  description = "IDs of the objects that can do all operations on all keys, secrets and certificates."
+}
+
+variable "private_endpoint_subnet_id" {
+  type        = string
+  default     = null
+  description = "The subnet ID where the private endpoint will be deployed"
+}
+
+variable "private_dns_zone_ids" {
+  type        = string
+  default     = null
+  description = "The subnet ID where the private endpoint will be deployed"
+}
+
+
+variable "geo_backup_key_vault_key_id" {
+  type        = string
+  default     = null
+  description = "Key-vault key id to encrypt the geo redundant backup"
+}
+
+variable "geo_backup_user_assigned_identity_id" {
+  type        = string
+  default     = null
+  description = "User assigned identity id to encrypt the geo redundant backup"
 }

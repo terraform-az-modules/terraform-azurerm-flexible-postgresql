@@ -6,11 +6,11 @@ on:
 
 jobs:
 # Update 'Job name' and 'terraform_directory' as needed based on the module structure.
-  public_pqsql_basic-example:
+  complete-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@master
     with:
       provider: 'azurerm'
-      terraform_directory: 'examples/public_pqsql_basic'
+      terraform_directory: 'examples/complete'
       target_branch: 'master'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}

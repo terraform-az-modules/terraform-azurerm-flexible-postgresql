@@ -11,6 +11,11 @@ jobs:
     with:
       working_directory: './examples/private_pqsql/'
 
+  private_pqsql-example:
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    with:
+      working_directory: './examples/private_pqsql_pe/'      
+
   private_pqsql_with_aad-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
