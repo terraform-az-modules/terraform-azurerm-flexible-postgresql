@@ -99,13 +99,13 @@ variable "admin_password" {
 variable "backup_retention_days" {
   type        = number
   default     = 30
-  description = "The backup retention days for the PostgreSQL Flexible Server. Possible values are between 1 and 35 days. Defaults to 7"
+  description = "The backup retention days for the PostgreSQL Flexible Server. Possible values are between 1 and 35 days. Defaults to 30"
 }
 
 variable "delegated_subnet_id" {
-  description = "The resource ID of the subnet"
   type        = string
   default     = null
+  description = "The resource ID of the subnet"
 }
 
 variable "sku_name" {
@@ -116,8 +116,8 @@ variable "sku_name" {
 
 variable "create_mode" {
   type        = string
-  description = "The creation mode. Can be used to restore or replicate existing servers. Possible values are `Default`, `Replica`, `GeoRestore`, and `PointInTimeRestore`. Defaults to `Default`"
   default     = "Default"
+  description = "The creation mode. Can be used to restore or replicate existing servers. Possible values are `Default`, `Replica`, `GeoRestore`, and `PointInTimeRestore`. Defaults to `Default`"
 }
 
 variable "geo_redundant_backup_enabled" {
@@ -176,14 +176,8 @@ variable "public_network_access_enabled" {
 
 variable "key_vault_key_id" {
   type        = string
-  default     = null
-  description = "The URL to a Key Vault Key"
-}
-
-variable "key_vault_id" {
-  type        = string
   default     = ""
-  description = "Specifies the URL to a Key Vault Key (either from a Key Vault Key, or the Key URL for the Key Vault Secret"
+  description = "Specifies the ID of a Key Vault Key to use for CMK encryption."
 }
 
 variable "location" {
@@ -262,7 +256,7 @@ variable "log_analytics_workspace_id" {
 variable "metric_enabled" {
   type        = bool
   default     = true
-  description = "Whether metric diagnonsis should be enable in diagnostic settings for flexible Mysql."
+  description = "Whether metric diagnosis should be enabled in diagnostic settings for flexible PostgreSQL."
 }
 
 variable "log_category" {
@@ -355,12 +349,11 @@ variable "private_endpoint_subnet_id" {
   description = "The subnet ID where the private endpoint will be deployed"
 }
 
-variable "private_dns_zone_ids" {
+variable "private_dns_zone_id" {
   type        = string
   default     = null
-  description = "The subnet ID where the private endpoint will be deployed"
+  description = "The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server."
 }
-
 
 variable "geo_backup_key_vault_key_id" {
   type        = string

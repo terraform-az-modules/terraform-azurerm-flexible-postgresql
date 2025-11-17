@@ -18,16 +18,15 @@ module "labels" {
 ## Below resource will create postgresql flexible server.    
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server" "main" {
-  count                  = var.enabled ? 1 : 0
-  name                   = var.resource_position_prefix ? format("pgsql-fs-%s", local.name) : format("%s-pgsql-fs", local.name)
-  resource_group_name    = var.resource_group_name
-  location               = var.location
-  administrator_login    = var.admin_username
-  administrator_password = var.admin_password
-  backup_retention_days  = var.backup_retention_days
-  delegated_subnet_id    = var.delegated_subnet_id
-  # private_dns_zone_id               = var.existing_private_dns_zone_id
-  private_dns_zone_id               = var.private_dns_zone_ids
+  count                             = var.enabled ? 1 : 0
+  name                              = var.resource_position_prefix ? format("pgsql-fs-%s", local.name) : format("%s-pgsql-fs", local.name)
+  resource_group_name               = var.resource_group_name
+  location                          = var.location
+  administrator_login               = var.admin_username
+  administrator_password            = var.admin_password
+  backup_retention_days             = var.backup_retention_days
+  delegated_subnet_id               = var.delegated_subnet_id
+  private_dns_zone_id               = var.private_dns_zone_id
   public_network_access_enabled     = var.public_network_access_enabled
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
@@ -79,7 +78,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   dynamic "customer_managed_key" {
     for_each = var.cmk_encryption_enabled ? [1] : []
     content {
-      key_vault_key_id                     = var.key_vault_id
+      key_vault_key_id                     = var.key_vault_key_id
       primary_user_assigned_identity_id    = azurerm_user_assigned_identity.identity[0].id
       geo_backup_key_vault_key_id          = var.geo_redundant_backup_enabled ? var.geo_backup_key_vault_key_id : null
       geo_backup_user_assigned_identity_id = var.geo_redundant_backup_enabled ? var.geo_backup_user_assigned_identity_id : null
@@ -114,11 +113,11 @@ resource "azurerm_postgresql_flexible_server_configuration" "main" {
 ##------------------------------------------------------------------------
 ## Manages a Customer Managed Key for a PostgreSQL Server. - Default is "false"
 ##------------------------------------------------------------------------
-resource "azurerm_postgresql_server_key" "main" {
-  count            = var.enabled && var.key_vault_key_id != null ? 1 : 0
-  server_id        = join("", azurerm_postgresql_flexible_server.main.*.id)
-  key_vault_key_id = var.key_vault_key_id
-}
+# resource "azurerm_postgresql_server_key" "main" {
+#   count            = var.enabled && var.key_vault_key_id != null ? 1 : 0
+#   server_id        = join("", azurerm_postgresql_flexible_server.main.*.id)
+#   key_vault_key_id = var.key_vault_key_id
+# }
 
 resource "azurerm_monitor_diagnostic_setting" "postgresql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
@@ -184,7 +183,7 @@ resource "azurerm_private_endpoint" "pep" {
 
   private_dns_zone_group {
     name                 = var.resource_position_prefix ? format("as-dns-zone-group-%s", local.name) : format("%s-as-dns-zone-group", local.name)
-    private_dns_zone_ids = [var.private_dns_zone_ids]
+    private_dns_zone_ids = [var.private_dns_zone_id]
   }
   lifecycle {
     ignore_changes = [

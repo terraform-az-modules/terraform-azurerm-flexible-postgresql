@@ -161,7 +161,7 @@ module "flexible-postgresql" {
   principal_type                = "ServicePrincipal" # or "User", "ServicePrincipal"
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
-  private_dns_zone_ids       = module.private_dns.private_dns_zone_ids.postgresql_server
+  private_dns_zone_id        = module.private_dns.private_dns_zone_ids.postgresql_server
   delegated_subnet_id        = module.subnet.subnet_ids.subnet1
   log_analytics_workspace_id = module.log-analytics.workspace_id
   # Database encryption with costumer manage keys

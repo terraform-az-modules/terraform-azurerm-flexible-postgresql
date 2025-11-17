@@ -164,7 +164,7 @@ module "flexible-postgresql" {
   active_directory_auth_enabled = false
 
   enable_private_endpoint = false
-  private_dns_zone_ids    = module.private_dns.private_dns_zone_ids.postgresql_server
+  private_dns_zone_id     = module.private_dns.private_dns_zone_ids.postgresql_server
   delegated_subnet_id     = module.subnet.subnet_ids.subnet1
 
 }

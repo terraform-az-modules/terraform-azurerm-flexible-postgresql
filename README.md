@@ -73,7 +73,7 @@ This table contains both Prerequisites and Providers:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_labels"></a> [labels](#module\_labels) | clouddrove/labels/azure | 1.0.0 |
+| <a name="module_labels"></a> [labels](#module\_labels) | terraform-az-modules/tags/azurerm | 1.0.2 |
 
 
 ## Resources
@@ -161,7 +161,7 @@ This table contains both Prerequisites and Providers:
 | Name | Description |
 |------|-------------|
 | <a name="output_postgresql_flexible_server_id"></a> [postgresql\_flexible\_server\_id](#output\_postgresql\_flexible\_server\_id) | The ID of the PostgreSQL Flexible Server. |
-| <a name="output_postgresql_flexible_server_name"></a> [postgresql\_flexible\_server\_name](#output\_postgresql\_flexible\_server\_name) | The Name of the PostgreSQL Flexible Server. |
+| <a name="output_postgresql_flexible_server_name"></a> [postgresql\_flexible\_server\_name](#output\_postgresql\_flexible\_server\_name) | The FQDN of the PostgreSQL Flexible Server. |
 
 <!-- 
 ## Module Dependencies

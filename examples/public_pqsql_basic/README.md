@@ -34,6 +34,6 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_flexible-postgresql_server_id"></a> [flexible-postgresql\_server\_id](#output\_flexible-postgresql\_server\_id) | The ID of the MySQL Flexible Server. |
-| <a name="output_flexible-postgresql_server_name"></a> [flexible-postgresql\_server\_name](#output\_flexible-postgresql\_server\_name) | The Name of the MySQL Flexible Server. |
+| <a name="output_flexible-postgresql_server_id"></a> [flexible-postgresql\_server\_id](#output\_flexible-postgresql\_server\_id) | The ID of the PostgreSQL Flexible Server. |
+| <a name="output_flexible-postgresql_server_name"></a> [flexible-postgresql\_server\_name](#output\_flexible-postgresql\_server\_name) | The Name of the PostgreSQL Flexible Server. |
 <!-- END_TF_DOCS -->

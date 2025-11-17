@@ -166,6 +166,6 @@ module "flexible-postgresql" {
 
   enable_private_endpoint    = true
   private_endpoint_subnet_id = module.subnet.subnet_ids.subnet2
-  private_dns_zone_ids       = module.private_dns.private_dns_zone_ids.postgresql_server
+  private_dns_zone_id        = module.private_dns.private_dns_zone_ids.postgresql_server
 
 }
