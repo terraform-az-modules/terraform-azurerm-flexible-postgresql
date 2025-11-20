@@ -41,18 +41,13 @@ module "flexible-postgresql" {
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.resource_group_location
   #server configuration
-  postgresql_version = "16"
-  admin_username     = "postgresqlusername"
-  admin_password     = "test_password" # Null value will generate random password and added to tfstate file.
-  sku_name           = "GP_Standard_D8ds_v4"
-  database_names     = ["maindb"]
-  high_availability = {
-    mode = "SameZone"
-    # standby_availability_zone = 1
-  }
+  postgresql_version            = "16"
+  admin_username                = "postgresqlusername"
+  admin_password                = "test_password" # Null value will generate random password and added to tfstate file.
+  sku_name                      = "B_Standard_B1ms"
+  database_names                = ["maindb"]
   public_network_access_enabled = true
-
-  log_analytics_workspace_id = module.log-analytics.workspace_id
+  log_analytics_workspace_id    = module.log-analytics.workspace_id
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_specific_ip" {

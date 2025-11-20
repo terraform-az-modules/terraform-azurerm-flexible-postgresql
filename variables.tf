@@ -110,7 +110,7 @@ variable "delegated_subnet_id" {
 
 variable "sku_name" {
   type        = string
-  default     = "GP_Standard_D8ds_v4"
+  default     = "Standard_B1ms"
   description = " The SKU Name for the PostgreSQL Flexible Server."
 }
 
@@ -174,11 +174,11 @@ variable "public_network_access_enabled" {
   description = "Defines whether public access is allowed."
 }
 
-variable "key_vault_key_id" {
-  type        = string
-  default     = ""
-  description = "Specifies the ID of a Key Vault Key to use for CMK encryption."
-}
+# variable "key_vault_key_id" {
+#   type        = string
+#   default     = ""
+#   description = "Specifies the ID of a Key Vault Key to use for CMK encryption."
+# }
 
 variable "location" {
   type        = string
@@ -234,10 +234,7 @@ variable "high_availability" {
     mode                      = string
     standby_availability_zone = optional(number)
   })
-  default = {
-    mode                      = "SameZone"
-    standby_availability_zone = 1
-  }
+  default = null
 }
 
 variable "enable_diagnostic" {
@@ -365,4 +362,66 @@ variable "geo_backup_user_assigned_identity_id" {
   type        = string
   default     = null
   description = "User assigned identity id to encrypt the geo redundant backup"
+}
+
+variable "identity_type" {
+  type        = string
+  default     = null
+  description = "Specifies the managed identity type to associate with resource."
+}
+
+##-----------------------------------------------------------------------------
+## Key Vault
+##-----------------------------------------------------------------------------
+variable "key_vault_id" {
+  type        = string
+  default     = null
+  description = "Azure Key Vault ID for integration."
+}
+
+variable "rotation_policy_config" {
+  type = object({
+    enabled              = bool
+    time_before_expiry   = optional(string, "P30D")
+    expire_after         = optional(string, "P90D")
+    notify_before_expiry = optional(string, "P29D")
+  })
+  default = {
+    enabled              = false
+    time_before_expiry   = "P30D"
+    expire_after         = "P90D"
+    notify_before_expiry = "P29D"
+  }
+  description = "Rotation policy configuration for Key Vault keys."
+}
+
+variable "key_permissions" {
+  type        = list(string)
+  default     = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey"]
+  description = "List of key permissions for the Key Vault key."
+}
+
+
+# variable "key_vault_rbac_auth_enabled" {
+#   type        = bool
+#   default     = true
+#   description = "Enable RBAC authentication for Key Vault."
+# }
+
+variable "key_expiration_date" {
+  description = "The expiration date for the Key Vault key"
+  type        = string
+  default     = "2028-12-31T23:59:59Z" # ISO 8601 format
+}
+
+variable "key_type" {
+  description = "The type of the key to create in Key Vault."
+  type        = string
+  default     = "RSA-HSM"
+}
+
+variable "key_size" {
+  description = "The size of the RSA key in bits."
+  type        = number
+  default     = 2048
 }

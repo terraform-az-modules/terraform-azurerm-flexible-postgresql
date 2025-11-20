@@ -70,7 +70,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   dynamic "identity" {
     for_each = var.cmk_encryption_enabled ? [1] : []
     content {
-      type         = "UserAssigned"
+      type         = var.identity_type
       identity_ids = [azurerm_user_assigned_identity.identity[0].id]
     }
   }
@@ -78,7 +78,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   dynamic "customer_managed_key" {
     for_each = var.cmk_encryption_enabled ? [1] : []
     content {
-      key_vault_key_id                     = var.key_vault_key_id
+      key_vault_key_id                     = azurerm_key_vault_key.cmk_key[0].id
       primary_user_assigned_identity_id    = azurerm_user_assigned_identity.identity[0].id
       geo_backup_key_vault_key_id          = var.geo_redundant_backup_enabled ? var.geo_backup_key_vault_key_id : null
       geo_backup_user_assigned_identity_id = var.geo_redundant_backup_enabled ? var.geo_backup_user_assigned_identity_id : null
@@ -90,6 +90,30 @@ resource "azurerm_postgresql_flexible_server" "main" {
   }
 
 }
+
+##-----------------------------------------------------------------------------
+## Key Vault Key - Deploy encryption key 
+##-----------------------------------------------------------------------------
+resource "azurerm_key_vault_key" "cmk_key" {
+  count           = var.enabled && var.cmk_encryption_enabled ? 1 : 0
+  name            = var.resource_position_prefix ? format("cmk-key-pgsql-fe-%s", local.name) : format("%s-cmk-key-pgsql-fe", local.name)
+  key_vault_id    = var.key_vault_id
+  key_type        = var.key_type
+  key_size        = var.key_size
+  expiration_date = var.key_expiration_date
+  key_opts        = var.key_permissions
+  dynamic "rotation_policy" {
+    for_each = var.rotation_policy_config.enabled ? [1] : []
+    content {
+      automatic {
+        time_before_expiry = var.rotation_policy_config.time_before_expiry
+      }
+      expire_after         = var.rotation_policy_config.expire_after
+      notify_before_expiry = var.rotation_policy_config.notify_before_expiry
+    }
+  }
+}
+
 
 ##-----------------------------------------------------------------------------
 ## Below resource will create postgresql flexible database.
@@ -112,14 +136,8 @@ resource "azurerm_postgresql_flexible_server_configuration" "main" {
 
 
 ##------------------------------------------------------------------------
-## Manages a Customer Managed Key for a PostgreSQL Server. - Default is "false"
+## Manages Diagnostic settings for a PostgreSQL Server.
 ##------------------------------------------------------------------------
-resource "azurerm_postgresql_server_key" "main" {
-  count            = var.enabled && var.cmk_encryption_enabled != false ? 1 : 0
-  server_id        = join("", azurerm_postgresql_flexible_server.main.*.id)
-  key_vault_key_id = var.key_vault_key_id
-}
-
 resource "azurerm_monitor_diagnostic_setting" "postgresql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
   name                           = var.resource_position_prefix ? format("pgsql-diag-log-%s", local.name) : format("%s-pgsql-diag-log", local.name)
