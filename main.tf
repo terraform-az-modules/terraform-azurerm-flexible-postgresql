@@ -110,14 +110,15 @@ resource "azurerm_postgresql_flexible_server_configuration" "main" {
   value     = element(var.values, count.index)
 }
 
+
 ##------------------------------------------------------------------------
 ## Manages a Customer Managed Key for a PostgreSQL Server. - Default is "false"
 ##------------------------------------------------------------------------
-# resource "azurerm_postgresql_server_key" "main" {
-#   count            = var.enabled && var.key_vault_key_id != null ? 1 : 0
-#   server_id        = join("", azurerm_postgresql_flexible_server.main.*.id)
-#   key_vault_key_id = var.key_vault_key_id
-# }
+resource "azurerm_postgresql_server_key" "main" {
+  count            = var.enabled && var.cmk_encryption_enabled != false ? 1 : 0
+  server_id        = join("", azurerm_postgresql_flexible_server.main.*.id)
+  key_vault_key_id = var.key_vault_key_id
+}
 
 resource "azurerm_monitor_diagnostic_setting" "postgresql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0

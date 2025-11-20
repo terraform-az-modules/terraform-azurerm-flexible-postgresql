@@ -94,10 +94,28 @@ module "vault" {
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
   location                      = module.resource_group.resource_group_location
-  subnet_id                     = module.subnet.subnet_ids.subnet2
-  public_network_access_enabled = true
-  sku_name                      = "standard"
+  subnet_id                     = module.subnet.subnet_ids["subnet2"]
+  enable_rbac_authorization     = false
   private_dns_zone_ids          = module.private_dns.private_dns_zone_ids.key_vault
+  public_network_access_enabled = true
+  enable_access_policies        = true
+  access_policies = {
+    "app-server" = {
+      tenant_id               = data.azurerm_client_config.current_client_config.tenant_id,
+      object_id               = data.azurerm_client_config.current_client_config.object_id,
+      key_permissions         = ["Get", "List", "WrapKey", "UnwrapKey"]
+      secret_permissions      = ["Get", "List"]
+      certificate_permissions = ["Get", "List"]
+      storage_permissions     = []
+    },
+    "admin-server" = {
+      tenant_id               = data.azurerm_client_config.current_client_config.tenant_id,
+      object_id               = data.azurerm_client_config.current_client_config.object_id,
+      key_permissions         = ["Get", "List", "Create", "Delete", "Purge", "Recover", "Backup", "Restore", "WrapKey", "UnwrapKey"]
+      secret_permissions      = ["Get", "List", "Set", "Delete", "Purge", "Recover", "Backup"]
+      certificate_permissions = ["Get", "List", "Create", "Delete", "Purge", "Recover"]
+    },
+  }
   network_acls = {
     bypass         = "AzureServices"
     default_action = "Deny"
@@ -109,9 +127,19 @@ module "vault" {
       principal_id         = data.azurerm_client_config.current_client_config.object_id
     }
   }
+
   diagnostic_setting_enable  = true
   log_analytics_workspace_id = module.log-analytics.workspace_id
 }
+
+resource "azurerm_key_vault_key" "cmk_key" {
+  name         = "cmk-key"
+  key_vault_id = module.vault.id
+  key_type     = "RSA"
+  key_size     = 2048
+  key_opts     = ["encrypt", "decrypt", "wrapKey", "unwrapKey"]
+}
+
 
 ##-----------------------------------------------------------------------------
 ## Private DNS Zone module call
@@ -155,17 +183,23 @@ module "flexible-postgresql" {
     mode = "SameZone"
     # standby_availability_zone = 1
   }
+
   public_network_access_enabled = false
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
   log_analytics_workspace_id = module.log-analytics.workspace_id
   # Database encryption with costumer manage keys
-  cmk_encryption_enabled = true
-  key_vault_id           = module.vault.id
-  admin_objects_ids      = [data.azurerm_client_config.current_client_config.object_id]
+  # cmk_encryption_enabled = false
+  # key_vault_key_id              = module.vault.id
+  admin_objects_ids = [data.azurerm_client_config.current_client_config.object_id]
 
   enable_private_endpoint    = true
   private_endpoint_subnet_id = module.subnet.subnet_ids.subnet2
   private_dns_zone_id        = module.private_dns.private_dns_zone_ids.postgresql_server
+  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
+
+
+  cmk_encryption_enabled = true
+  key_vault_key_id       = azurerm_key_vault_key.cmk_key.id
 
 }
