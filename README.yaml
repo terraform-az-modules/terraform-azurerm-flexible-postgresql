@@ -5,7 +5,7 @@
 #
 
 # Name of this project
-name : Terraform Azure Module Template
+name : Terraform Azure Flexible Postgresql
 
 # License of this project
 license: "APACHE"
@@ -43,7 +43,4 @@ description: |-
 # How to use this project
 # How to use this project
 usage: |-
-  Here are some examples of how you can use this module in your inventory structure:
-  ```hcl
-    locals {}
     ```
