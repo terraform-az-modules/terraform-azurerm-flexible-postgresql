@@ -21,11 +21,12 @@ module "labels" {
 resource "random_password" "main" {
   count       = var.admin_password == null ? 1 : 0
   length      = var.admin_password_length
-  min_upper   = 4
-  min_lower   = 2
-  min_numeric = 4
-  special     = false
+  min_upper   = var.min_upper
+  min_lower   = var.min_lower
+  min_numeric = var.min_numeric
+  special     = var.special
 }
+
 
 ##----------------------------------------------------------------------------- 
 ## Below resource will create postgresql flexible server.    

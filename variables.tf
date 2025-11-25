@@ -102,6 +102,31 @@ variable "admin_password_length" {
   description = "Length of the randomly generated admin password, if not provided."
 }
 
+variable "min_upper" {
+  type        = number
+  default     = 4
+  description = "Minimum number of uppercase letters in the generated password."
+}
+
+variable "min_lower" {
+  type        = number
+  default     = 2
+  description = "Minimum number of lowercase letters in the generated password."
+}
+
+variable "min_numeric" {
+  type        = number
+  default     = 4
+  description = "Minimum number of numeric characters in the generated password."
+}
+
+variable "special" {
+  type        = bool
+  default     = false
+  description = "Whether to include special characters in the generated password."
+}
+
+
 variable "backup_retention_days" {
   type        = number
   default     = 30
