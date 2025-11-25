@@ -142,7 +142,8 @@ This table contains both Prerequisites and Providers:
 | <a name="input_postgresql_version"></a> [postgresql\_version](#input\_postgresql\_version) | The version of the PostgreSQL Flexible Server to use. Changing this forces a new PostgreSQL Flexible Server to be created. | `string` | `"16"` | no |
 | <a name="input_principal_name"></a> [principal\_name](#input\_principal\_name) | The name of Azure Active Directory principal. | `string` | `null` | no |
 | <a name="input_principal_type"></a> [principal\_type](#input\_principal\_type) | Set the principal type, defaults to ServicePrincipal. The type of Azure Active Directory principal. Possible values are Group, ServicePrincipal and User. Changing this forces a new resource to be created. | `string` | `"Group"` | no |
-| <a name="input_private_dns_zone_ids"></a> [private\_dns\_zone\_ids](#input\_private\_dns\_zone\_ids) | The subnet ID where the private endpoint will be deployed | `string` | `null` | no |
+| <a name="input_private_dns_zone_ids"></a> [private\_dns\_zone\_ids](#input\_private\_dns\_zone\_ids) | The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server. | `string` | `null` | no |
+| <a name="input_private_dns_id"></a> [private\_dns\_id](#input\_private\_dns\_id) | The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server,when we dont enable private endpoint. | `string` | `null` | no |
 | <a name="input_private_endpoint_subnet_id"></a> [private\_endpoint\_subnet\_id](#input\_private\_endpoint\_subnet\_id) | The subnet ID where the private endpoint will be deployed | `string` | `null` | no |
 | <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled) | Defines whether public access is allowed. | `bool` | `false` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `""` | no |

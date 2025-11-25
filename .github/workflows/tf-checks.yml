@@ -6,20 +6,15 @@ on:
   workflow_dispatch:
 jobs:
 # Update 'Job name' and 'working_directory' as needed based on the module structure.
-  private_pqsql-example:
+  private_pqsql_vnet_integration-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
-      working_directory: './examples/private_pqsql/'
+      working_directory: './examples/private_pqsql_vnet_integration/'
 
-  private_pqsql-example:
+  private_pqsql_private_endpoint-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
-      working_directory: './examples/private_pqsql_pe/'      
-
-  private_pqsql_with_aad-example:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
-    with:
-      working_directory: './examples/private_pqsql_with_aad/'
+      working_directory: './examples/private_pqsql_with_private_endpoint/'      
 
   public_pqsql_basic-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master

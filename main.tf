@@ -14,6 +14,19 @@ module "labels" {
   extra_tags      = var.extra_tags
 }
 
+##-----------------------------------------------------------------------------
+## Random Password Resource.
+## Will be passed as admin password of mysql server when admin password is not passed manually as variable.
+##-----------------------------------------------------------------------------
+resource "random_password" "main" {
+  count       = var.admin_password == null ? 1 : 0
+  length      = var.admin_password_length
+  min_upper   = 4
+  min_lower   = 2
+  min_numeric = 4
+  special     = false
+}
+
 ##----------------------------------------------------------------------------- 
 ## Below resource will create postgresql flexible server.    
 ##-----------------------------------------------------------------------------
@@ -23,10 +36,10 @@ resource "azurerm_postgresql_flexible_server" "main" {
   resource_group_name               = var.resource_group_name
   location                          = var.location
   administrator_login               = var.admin_username
-  administrator_password            = var.admin_password
+  administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
   backup_retention_days             = var.backup_retention_days
   delegated_subnet_id               = var.delegated_subnet_id
-  private_dns_zone_id               = var.private_dns_zone_id
+  private_dns_zone_id               = var.private_dns_id
   public_network_access_enabled     = var.public_network_access_enabled
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
@@ -70,7 +83,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   dynamic "identity" {
     for_each = var.cmk_encryption_enabled ? [1] : []
     content {
-      type         = var.identity_type
+      type         = "UserAssigned"
       identity_ids = [azurerm_user_assigned_identity.identity[0].id]
     }
   }
@@ -88,7 +101,6 @@ resource "azurerm_postgresql_flexible_server" "main" {
   lifecycle {
     ignore_changes = [administrator_password, authentication]
   }
-
 }
 
 ##-----------------------------------------------------------------------------
@@ -113,7 +125,6 @@ resource "azurerm_key_vault_key" "cmk_key" {
     }
   }
 }
-
 
 ##-----------------------------------------------------------------------------
 ## Below resource will create postgresql flexible database.
@@ -155,11 +166,10 @@ resource "azurerm_monitor_diagnostic_setting" "postgresql" {
     }
   }
 
-  dynamic "metric" {
+  dynamic "enabled_metric" {
     for_each = var.metric_enabled ? ["AllMetrics"] : []
     content {
-      category = metric.value
-      enabled  = true
+      category = enabled_metric.value
     }
   }
   lifecycle {
@@ -201,7 +211,7 @@ resource "azurerm_private_endpoint" "pep" {
   }
 
   private_dns_zone_group {
-    name                 = var.resource_position_prefix ? format("as-dns-zone-group-%s", local.name) : format("%s-as-dns-zone-group", local.name)
+    name                 = var.resource_position_prefix ? format("pgsql-dns-zone-group-%s", local.name) : format("%s-pgsql-dns-zone-group", local.name)
     private_dns_zone_ids = [var.private_dns_zone_id]
   }
   lifecycle {

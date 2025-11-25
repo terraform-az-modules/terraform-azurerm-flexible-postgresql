@@ -86,9 +86,6 @@ module "log-analytics" {
 # ------------------------------------------------------------------------------
 # Key Vault
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-# Key Vault
-# ------------------------------------------------------------------------------
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azurerm"
   version                       = "1.0.1"
@@ -117,15 +114,16 @@ module "vault" {
   log_analytics_workspace_id = module.log-analytics.workspace_id
 }
 
+
 ##-----------------------------------------------------------------------------
 ## Private DNS Zone module call
 ##-----------------------------------------------------------------------------
 module "private_dns" {
   source              = "terraform-az-modules/private-dns/azurerm"
   version             = "1.0.2"
-  location            = module.resource_group.resource_group_location
-  name                = "dns"
+  name                = "core"
   environment         = "dev"
+  location            = module.resource_group.resource_group_location
   resource_group_name = module.resource_group.resource_group_name
   private_dns_config = [
     {
@@ -150,24 +148,23 @@ module "flexible-postgresql" {
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.resource_group_location
   #server configuration
-  postgresql_version = "16"
+  postgresql_version = "17"
   admin_username     = "postgresqlusername"
   admin_password     = "test_password" # Null value will generate random password and added to tfstate file.
   sku_name           = "B_Standard_B1ms"
   database_names     = ["maindb"]
-  # provide the required values to attach aad group
-  active_directory_auth_enabled = true
-  principal_name                = "" # e.g., an AAD group name
-  principal_type                = "" # or "User", "ServicePrincipal"
   #private server
   #(Resources to recreate when changing private to public cluster or vise-versa )
-  private_dns_zone_id        = module.private_dns.private_dns_zone_ids.postgresql_server
-  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
   log_analytics_workspace_id = module.log-analytics.workspace_id
-  key_vault_id               = module.vault.id
   # Database encryption with costumer manage keys
-  key_type               = "RSA"
-  identity_type          = "UserAssigned" #eg.. SystemAssigned, UserAssigned
-  cmk_encryption_enabled = true
-  admin_objects_ids      = [data.azurerm_client_config.current_client_config.object_id]
+  cmk_encryption_enabled  = true
+  key_vault_id            = module.vault.id
+  admin_objects_ids       = [data.azurerm_client_config.current_client_config.object_id]
+  enable_private_endpoint = false
+  private_dns_id          = module.private_dns.private_dns_zone_ids.postgresql_server #private_dns_id is passed when we don't use private endpoint
+  delegated_subnet_id     = module.subnet.subnet_ids.subnet1
+
+  # provide the required values to attach aad group
+  active_directory_auth_enabled = true
+  principal_name                = "test-db" # e.g., an AAD group name
 }

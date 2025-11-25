@@ -41,7 +41,7 @@ module "flexible-postgresql" {
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.resource_group_location
   #server configuration
-  postgresql_version            = "16"
+  postgresql_version            = "18"
   admin_username                = "postgresqlusername"
   admin_password                = "test_password" # Null value will generate random password and added to tfstate file.
   sku_name                      = "B_Standard_B1ms"

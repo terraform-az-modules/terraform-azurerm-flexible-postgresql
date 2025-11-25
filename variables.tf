@@ -96,6 +96,12 @@ variable "admin_password" {
   description = "The password associated with the admin_username user"
 }
 
+variable "admin_password_length" {
+  type        = number
+  default     = 16
+  description = "Length of the randomly generated admin password, if not provided."
+}
+
 variable "backup_retention_days" {
   type        = number
   default     = 30
@@ -173,12 +179,6 @@ variable "public_network_access_enabled" {
   default     = false
   description = "Defines whether public access is allowed."
 }
-
-# variable "key_vault_key_id" {
-#   type        = string
-#   default     = ""
-#   description = "Specifies the ID of a Key Vault Key to use for CMK encryption."
-# }
 
 variable "location" {
   type        = string
@@ -330,7 +330,7 @@ variable "database_names" {
 
 variable "cmk_encryption_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "Enable customer-managed key (CMK) encryption for the PostgreSQL Flexible Server."
 }
 
@@ -352,6 +352,12 @@ variable "private_dns_zone_id" {
   description = "The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server."
 }
 
+variable "private_dns_id" {
+  type        = string
+  default     = null
+  description = "Private DNS zone id to be passed when we don't use private endpoint"
+}
+
 variable "geo_backup_key_vault_key_id" {
   type        = string
   default     = null
@@ -362,12 +368,6 @@ variable "geo_backup_user_assigned_identity_id" {
   type        = string
   default     = null
   description = "User assigned identity id to encrypt the geo redundant backup"
-}
-
-variable "identity_type" {
-  type        = string
-  default     = null
-  description = "Specifies the managed identity type to associate with resource."
 }
 
 ##-----------------------------------------------------------------------------
@@ -401,13 +401,6 @@ variable "key_permissions" {
   description = "List of key permissions for the Key Vault key."
 }
 
-
-# variable "key_vault_rbac_auth_enabled" {
-#   type        = bool
-#   default     = true
-#   description = "Enable RBAC authentication for Key Vault."
-# }
-
 variable "key_expiration_date" {
   description = "The expiration date for the Key Vault key"
   type        = string
@@ -417,7 +410,7 @@ variable "key_expiration_date" {
 variable "key_type" {
   description = "The type of the key to create in Key Vault."
   type        = string
-  default     = "RSA-HSM"
+  default     = "RSA"
 }
 
 variable "key_size" {

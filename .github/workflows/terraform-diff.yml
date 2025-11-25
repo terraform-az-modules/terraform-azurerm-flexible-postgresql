@@ -6,11 +6,31 @@ on:
 
 jobs:
 # Update 'Job name' and 'terraform_directory' as needed based on the module structure.
-  complete-example:
+  private_pqsql_vnet_integration-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@master
     with:
       provider: 'azurerm'
-      terraform_directory: 'examples/complete'
+      terraform_directory: 'examples/private_pqsql_vnet_integration'
+      target_branch: 'master'
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+  private_pqsql_with_private_endpoint-example:
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@master
+    with:
+      provider: 'azurerm'
+      terraform_directory: 'examples/private_pqsql_with_private_endpoint'
+      target_branch: 'master'
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+  public_pqsql-example:
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@master
+    with:
+      provider: 'azurerm'
+      terraform_directory: 'examples/public_pqsql_basic'
       target_branch: 'master'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
