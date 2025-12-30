@@ -2,6 +2,8 @@ provider "azurerm" {
   features {}
 }
 
+data "azurerm_client_config" "current_client_config" {}
+
 ##-----------------------------------------------------------------------------
 ## Resource Group module call
 ## Resource group in which all resources will be deployed.
@@ -31,6 +33,28 @@ module "log-analytics" {
 }
 
 # ------------------------------------------------------------------------------
+# Key Vault
+# ------------------------------------------------------------------------------
+module "vault" {
+  source                        = "terraform-az-modules/key-vault/azurerm"
+  version                       = "1.0.1"
+  name                          = "core"
+  environment                   = "dev"
+  label_order                   = ["name", "environment", "location"]
+  resource_group_name           = module.resource_group.resource_group_name
+  location                      = module.resource_group.resource_group_location
+  public_network_access_enabled = true
+  sku_name                      = "standard"
+  reader_objects_ids = {
+    "Key Vault Administrator" = {
+      role_definition_name = "Key Vault Administrator"
+      principal_id         = data.azurerm_client_config.current_client_config.object_id
+    }
+  }
+  enable_private_endpoint = false
+}
+
+# ------------------------------------------------------------------------------
 # Flexible Postgresql
 # ------------------------------------------------------------------------------
 module "flexible-postgresql" {
@@ -48,6 +72,7 @@ module "flexible-postgresql" {
   database_names                = ["maindb"]
   public_network_access_enabled = true
   log_analytics_workspace_id    = module.log-analytics.workspace_id
+  key_vault_id                  = module.vault.id
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_specific_ip" {
