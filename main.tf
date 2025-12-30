@@ -153,7 +153,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "main" {
 resource "azurerm_monitor_diagnostic_setting" "postgresql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
   name                           = var.resource_position_prefix ? format("pgsql-diag-log-%s", local.name) : format("%s-pgsql-diag-log", local.name)
-  target_resource_id             = azurerm_postgresql_flexible_server.main[*].id
+  target_resource_id             = join("", azurerm_postgresql_flexible_server.main[*].id)
   log_analytics_workspace_id     = var.log_analytics_workspace_id
   storage_account_id             = var.storage_account_id
   eventhub_name                  = var.eventhub_name
