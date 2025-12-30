@@ -435,7 +435,7 @@ variable "key_expiration_date" {
 variable "key_type" {
   description = "The type of the key to create in Key Vault."
   type        = string
-  default     = "RSA"
+  default     = "RSA-HSM"
 }
 
 variable "key_size" {
