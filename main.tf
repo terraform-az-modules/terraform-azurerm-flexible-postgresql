@@ -133,7 +133,7 @@ resource "azurerm_key_vault_key" "cmk_key" {
 resource "azurerm_postgresql_flexible_server_database" "main" {
   count      = var.enabled ? length(var.database_names) : 0
   name       = var.database_names[count.index]
-  server_id  = join("", azurerm_postgresql_flexible_server.main.*.id)
+  server_id  = join("", azurerm_postgresql_flexible_server.main[*].id)
   charset    = var.charset
   collation  = var.collation
   depends_on = [azurerm_postgresql_flexible_server.main]
@@ -142,7 +142,7 @@ resource "azurerm_postgresql_flexible_server_database" "main" {
 resource "azurerm_postgresql_flexible_server_configuration" "main" {
   count     = var.enabled ? length(var.server_configuration_name) : 0
   name      = element(var.server_configuration_name, count.index)
-  server_id = join("", azurerm_postgresql_flexible_server.main.*.id)
+  server_id = join("", azurerm_postgresql_flexible_server.main[*].id)
   value     = element(var.values, count.index)
 }
 
@@ -153,7 +153,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "main" {
 resource "azurerm_monitor_diagnostic_setting" "postgresql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
   name                           = var.resource_position_prefix ? format("pgsql-diag-log-%s", local.name) : format("%s-pgsql-diag-log", local.name)
-  target_resource_id             = azurerm_postgresql_flexible_server.main[0].id
+  target_resource_id             = join("", azurerm_postgresql_flexible_server.main[*].id)
   log_analytics_workspace_id     = var.log_analytics_workspace_id
   storage_account_id             = var.storage_account_id
   eventhub_name                  = var.eventhub_name

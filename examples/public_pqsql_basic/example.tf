@@ -48,6 +48,7 @@ module "flexible-postgresql" {
   database_names                = ["maindb"]
   public_network_access_enabled = true
   log_analytics_workspace_id    = module.log-analytics.workspace_id
+  cmk_encryption_enabled        = false
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_specific_ip" {
