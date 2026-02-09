@@ -42,7 +42,7 @@ module "flexible-postgresql" {
   location            = module.resource_group.resource_group_location
   #server configuration
   postgresql_version            = "18"
-  admin_username                = "postgresqlusername"
+  admin_username                = "pg${random_string.pg_admin_username.result}"
   admin_password                = null # Module generates a random password when null.
   sku_name                      = "B_Standard_B1ms"
   database_names                = ["maindb"]
