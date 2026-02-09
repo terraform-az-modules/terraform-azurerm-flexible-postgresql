@@ -7,21 +7,21 @@ on:
 jobs:
 # Update 'Job name' and 'working_directory' as needed based on the module structure.
   private_pqsql_vnet_integration-example:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@88efd7724e007c8f721a219498be29e0c9ad471b
     with:
       working_directory: './examples/private_pqsql_vnet_integration/'
 
   private_pqsql_private_endpoint-example:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@88efd7724e007c8f721a219498be29e0c9ad471b
     with:
       working_directory: './examples/private_pqsql_with_private_endpoint/'      
 
   public_pqsql_basic-example:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@88efd7724e007c8f721a219498be29e0c9ad471b
     with:
       working_directory: './examples/public_pqsql_basic/'
 # Seperate Job for TFlint workflow call
   tf-lint:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-lint.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-lint.yml@88efd7724e007c8f721a219498be29e0c9ad471b
     secrets:
       GITHUB: ${{ secrets.GITHUB }}
