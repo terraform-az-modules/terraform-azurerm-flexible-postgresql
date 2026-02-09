@@ -238,3 +238,13 @@ Write to us at [hello@clouddrove.com](hello@clouddrove.com).
   [email]: <>
   [github]: https://github.com/terraform-az-modules
   [terraform_modules]: https://github.com/orgs/terraform-az-modules/repositories
+
+
+## Security defaults updated (2026-02)
+
+This module/examples include hardening updates to reduce insecure-by-default posture. If you relied on previous permissive defaults, set variables explicitly during upgrade.
+
+## Security Notes
+
+Private examples were hardened to avoid broad Key Vault public ingress (`ip_rules = []` and `public_network_access_enabled = false`).
+If public ingress is required, opt out explicitly and restrict allowed CIDRs.
