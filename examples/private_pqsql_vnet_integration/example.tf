@@ -102,7 +102,7 @@ module "vault" {
   network_acls = {
     bypass         = "AzureServices"
     default_action = "Deny"
-    ip_rules       = ["0.0.0.0/0"]
+    ip_rules       = []
   }
   reader_objects_ids = {
     "Key Vault Administrator" = {
