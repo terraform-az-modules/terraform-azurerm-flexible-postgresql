@@ -101,8 +101,8 @@ module "vault" {
   enable_access_policies        = false
   network_acls = {
     bypass         = "AzureServices"
-    default_action = "Allow"
-    ip_rules       = ["0.0.0.0/0"]
+    default_action = "Deny"
+    ip_rules       = []
   }
   reader_objects_ids = {
     "Key Vault Administrator" = {
