@@ -97,7 +97,7 @@ module "vault" {
   subnet_id                     = module.subnet.subnet_ids["subnet2"]
   enable_rbac_authorization     = true
   private_dns_zone_ids          = module.private_dns.private_dns_zone_ids.key_vault
-  public_network_access_enabled = true
+  public_network_access_enabled = false
   enable_access_policies        = false
   network_acls = {
     bypass         = "AzureServices"
@@ -149,7 +149,7 @@ module "flexible-postgresql" {
   #server configuration
   postgresql_version            = "17"
   admin_username                = "postgresqlusername"
-  admin_password                = "test_password" # Null value will generate random password and added to tfstate file.
+  admin_password                = null # Module generates a random password when null.
   sku_name                      = "B_Standard_B1ms"
   database_names                = ["maindb"]
   public_network_access_enabled = false
