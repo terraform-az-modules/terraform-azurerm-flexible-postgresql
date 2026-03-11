@@ -7,3 +7,8 @@ output "postgresql_flexible_server_name" {
   value       = try(azurerm_postgresql_flexible_server.main[0].fqdn, null)
   description = "The FQDN of the PostgreSQL Flexible Server."
 }
+
+output "pgvector_enabled" {
+  description = "Whether the pgvector extension was configured on this server."
+  value       = var.enable_pgvector
+}
