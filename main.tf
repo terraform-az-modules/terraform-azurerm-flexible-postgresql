@@ -221,3 +221,23 @@ resource "azurerm_private_endpoint" "pep" {
     ]
   }
 }
+
+##-----------------------------------------------------------------------------
+## pgvector – Allowlist extensions at the server level.
+## Azure mandates explicit allowlisting before CREATE EXTENSION can succeed.
+## 'vector' is added automatically when enable_pgvector = true.
+## Also handles any other extensions supplied via var.azure_extensions.
+##
+## ⚠ Do NOT pass 'azure.extensions' through var.server_configuration_name
+##   when using var.azure_extensions or var.enable_pgvector — doing so will
+##   create a duplicate resource conflict in Terraform state.
+##-----------------------------------------------------------------------------
+resource "azurerm_postgresql_flexible_server_configuration" "azure_extensions" {
+  count     = var.enabled && length(local.azure_extensions_list) > 0 ? 1 : 0
+  name      = "azure.extensions"
+  server_id = azurerm_postgresql_flexible_server.main[0].id
+  value     = join(",", local.azure_extensions_list)
+  depends_on = [azurerm_postgresql_flexible_server.main,
+    azurerm_postgresql_flexible_server_configuration.main,
+  ]
+}

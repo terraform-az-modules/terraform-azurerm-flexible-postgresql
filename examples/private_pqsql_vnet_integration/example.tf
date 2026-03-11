@@ -55,7 +55,7 @@ module "subnet" {
           service_delegations = [
             {
               name    = "Microsoft.DBforPostgreSQL/flexibleServers"
-              actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+              actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
             }
           ]
         }
@@ -96,12 +96,12 @@ module "vault" {
   location                      = module.resource_group.resource_group_location
   subnet_id                     = module.subnet.subnet_ids["subnet2"]
   enable_rbac_authorization     = true
-  private_dns_zone_ids          = module.private_dns.private_dns_zone_ids.key_vault
+  enable_private_endpoint       = false
   public_network_access_enabled = true
   enable_access_policies        = false
   network_acls = {
     bypass         = "AzureServices"
-    default_action = "Deny"
+    default_action = "Allow"
     ip_rules       = ["0.0.0.0/0"]
   }
   reader_objects_ids = {
@@ -110,8 +110,7 @@ module "vault" {
       principal_id         = data.azurerm_client_config.current_client_config.object_id
     }
   }
-  diagnostic_setting_enable  = true
-  log_analytics_workspace_id = module.log-analytics.workspace_id
+  diagnostic_setting_enable = false
 }
 
 
@@ -127,10 +126,6 @@ module "private_dns" {
   resource_group_name = module.resource_group.resource_group_name
   private_dns_config = [
     {
-      resource_type = "key_vault"
-      vnet_ids      = [module.vnet.vnet_id]
-    },
-    {
       resource_type = "postgresql_server"
       vnet_ids      = [module.vnet.vnet_id]
     }
@@ -141,7 +136,7 @@ module "private_dns" {
 # Flexible Postgresql
 # ------------------------------------------------------------------------------
 module "flexible-postgresql" {
-  depends_on          = [module.resource_group, module.vnet, module.private_dns]
+  depends_on          = [module.resource_group, module.vnet, module.private_dns, module.vault]
   source              = "../.."
   name                = "core"
   environment         = "dev"
@@ -166,5 +161,15 @@ module "flexible-postgresql" {
 
   # provide the required values to attach aad group
   active_directory_auth_enabled = true
+  password_auth_enabled         = true      # ← must be true for psql CREATE EXTENSION step
   principal_name                = "test-db" # e.g., an AAD group name
+
+  # -------------------------------------------------------
+  # pgvector
+  # -------------------------------------------------------
+  enable_pgvector = true
+
+  # Optional: allowlist additional extensions alongside vector.
+  # azure_extensions = ["PGAUDIT", "BTREE_GIST", "CITEXT", "CUBE"]
+  key_type = "RSA"
 }
