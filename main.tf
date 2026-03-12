@@ -40,7 +40,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
   backup_retention_days             = var.backup_retention_days
   delegated_subnet_id               = var.delegated_subnet_id
-  private_dns_zone_id               = var.private_dns_id
+  private_dns_zone_id               = var.private_dns_zone_id
   public_network_access_enabled     = var.public_network_access_enabled
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
@@ -240,4 +240,21 @@ resource "azurerm_postgresql_flexible_server_configuration" "azure_extensions" {
   depends_on = [azurerm_postgresql_flexible_server.main,
     azurerm_postgresql_flexible_server_configuration.main,
   ]
+}
+
+##-----------------------------------------------------------------------------
+## PostgreSQL Flexible Server Firewall Rules
+## Only applicable when public_network_access_enabled = true
+##-----------------------------------------------------------------------------
+resource "azurerm_postgresql_flexible_server_firewall_rule" "main" {
+  for_each = var.enabled && var.public_network_access_enabled ? {
+    for rule in var.firewall_rules : rule.name => rule
+  } : {}
+
+  name             = each.value.name
+  server_id        = azurerm_postgresql_flexible_server.main[0].id
+  start_ip_address = each.value.start_ip_address
+  end_ip_address   = each.value.end_ip_address
+
+  depends_on = [azurerm_postgresql_flexible_server.main]
 }
