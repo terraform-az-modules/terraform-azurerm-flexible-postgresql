@@ -156,7 +156,7 @@ module "flexible-postgresql" {
   key_vault_id            = module.vault.id
   admin_objects_ids       = [data.azurerm_client_config.current_client_config.object_id]
   enable_private_endpoint = false
-  private_dns_id          = module.private_dns.private_dns_zone_ids.postgresql_server #private_dns_id is passed when we don't use private endpoint
+  private_dns_zone_id     = module.private_dns.private_dns_zone_ids.postgresql_server #private_dns_id is passed when we don't use private endpoint
   delegated_subnet_id     = module.subnet.subnet_ids.subnet1
 
   # provide the required values to attach aad group

@@ -377,12 +377,6 @@ variable "private_dns_zone_id" {
   description = "The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server."
 }
 
-variable "private_dns_id" {
-  type        = string
-  default     = null
-  description = "Private DNS zone id to be passed when we don't use private endpoint"
-}
-
 variable "geo_backup_key_vault_key_id" {
   type        = string
   default     = null
@@ -461,4 +455,21 @@ variable "azure_extensions" {
   EOT
   type        = list(string)
   default     = []
+}
+
+##-----------------------------------------------------------------------------
+## PostgreSQL Firewall Rules
+##-----------------------------------------------------------------------------
+variable "firewall_rules" {
+  description = <<-EOT
+    List of firewall rules to apply to the PostgreSQL Flexible Server.
+    Only used when public_network_access_enabled = true.
+    For a single IP set start_ip_address and end_ip_address to the same value.
+  EOT
+  type = list(object({
+    name             = string
+    start_ip_address = string
+    end_ip_address   = string
+  }))
+  default = []
 }

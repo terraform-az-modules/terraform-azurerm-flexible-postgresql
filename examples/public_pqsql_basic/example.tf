@@ -41,7 +41,7 @@ module "flexible-postgresql" {
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.resource_group_location
   #server configuration
-  postgresql_version            = "18"
+  postgresql_version            = "17"
   admin_username                = "postgresqlusername"
   admin_password                = "test_password" # Null value will generate random password and added to tfstate file.
   sku_name                      = "B_Standard_B1ms"
@@ -49,11 +49,20 @@ module "flexible-postgresql" {
   public_network_access_enabled = true
   log_analytics_workspace_id    = module.log-analytics.workspace_id
   cmk_encryption_enabled        = false
-}
 
-resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_specific_ip" {
-  name             = "allow-specific-ip"
-  server_id        = module.flexible-postgresql.postgresql_flexible_server_id
-  start_ip_address = "11.32.16.78" #replace it with you ip range 
-  end_ip_address   = "11.32.16.78" #replace it with you ip range
+  # Firewall rules — only active when public_network_access_enabled = true
+  firewall_rules = [
+    {
+      name             = "allow-my-ip"
+      start_ip_address = "11.32.16.78"
+      end_ip_address   = "11.32.16.78"
+    }
+    # Add more rules as needed:
+    # {
+    #   name             = "allow-office-range"
+    #   start_ip_address = "10.0.0.1"
+    #   end_ip_address   = "10.0.0.255"
+    # }
+  ]
+
 }
