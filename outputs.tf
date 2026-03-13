@@ -8,11 +8,6 @@ output "postgresql_flexible_server_name" {
   description = "The FQDN of the PostgreSQL Flexible Server."
 }
 
-output "pgvector_enabled" {
-  description = "Whether the pgvector extension was configured on this server."
-  value       = var.enable_pgvector
-}
-
 output "firewall_rule_ids" {
   description = "Map of firewall rule names to their resource IDs."
   value       = { for k, v in azurerm_postgresql_flexible_server_firewall_rule.main : k => v.id }

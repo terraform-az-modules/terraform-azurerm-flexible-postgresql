@@ -433,25 +433,6 @@ variable "key_size" {
 }
 
 ##-----------------------------------------------------------------------------
-## pgvector Extension
-##-----------------------------------------------------------------------------
-variable "enable_pgvector" {
-  description = "Set to true to allowlist and install the pgvector (vector) extension on the PostgreSQL Flexible Server."
-  type        = bool
-  default     = false
-}
-
-variable "azure_extensions" {
-  description = <<-EOT
-    Additional PostgreSQL extensions to allowlist via the azure.extensions server parameter
-    (e.g., ["pg_trgm", "uuid-ossp"]). 'vector' is appended automatically when enable_pgvector = true.
-    Do NOT also pass 'azure.extensions' via server_configuration_name when using this variable.
-  EOT
-  type        = list(string)
-  default     = []
-}
-
-##-----------------------------------------------------------------------------
 ## PostgreSQL Firewall Rules
 ##-----------------------------------------------------------------------------
 variable "firewall_rules" {

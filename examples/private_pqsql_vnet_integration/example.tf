@@ -169,14 +169,8 @@ module "flexible-postgresql" {
     "pgaudit.log"                         = "ALL"
     "log_connections"                     = "on"
     "idle_in_transaction_session_timeout" = "300000"
+    "azure.extensions"                    = "VECTOR,PGAUDIT,BTREE_GIST,CITEXT,CUBE"
   }
 
-  # -------------------------------------------------------
-  # pgvector
-  # -------------------------------------------------------
-  enable_pgvector = true
-
-  # Optional: allowlist additional extensions alongside vector.
-  # azure_extensions = ["PGAUDIT", "BTREE_GIST", "CITEXT", "CUBE"]
   key_type = "RSA"
 }

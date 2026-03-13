@@ -140,12 +140,10 @@ resource "azurerm_postgresql_flexible_server_database" "main" {
 
 ##-----------------------------------------------------------------------------
 ## PostgreSQL Server Configuration
-## Manages all server parameters including azure.extensions (auto-injected
-## when enable_pgvector = true or azure_extensions is non-empty).
+## Manages all server parameters including azure.extensions
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server_configuration" "main" {
-  for_each = var.enabled ? local.final_server_configuration : {}
-
+  for_each  = var.enabled ? var.server_configuration : {}
   name      = each.key
   server_id = azurerm_postgresql_flexible_server.main[0].id
   value     = each.value
