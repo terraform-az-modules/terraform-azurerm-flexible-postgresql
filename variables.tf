@@ -211,22 +211,16 @@ variable "location" {
   description = "The Azure Region where the PostgreSQL Flexible Server should exist. Changing this forces a new PostgreSQL Flexible Server to be created."
 }
 
-variable "server_configuration_name" {
-  type = list(string)
-  default = [
-    # "azure.extensions",
-    "pgaudit.log",
-  ]
-  description = "Specifies the name of the PostgreSQL Flexible Server Configuration, which needs to be a valid PostgreSQL configuration name. Changing this forces a new resource to be created."
-}
-
-variable "values" {
-  type = list(string)
-  default = [
-    # "CUBE,CITEXT,BTREE_GIST,PGAUDIT",
-    "ALL",
-  ]
-  description = "Specifies the value of the PostgreSQL Flexible Server Configuration. See the PostgreSQL documentation for valid values. Changing this forces a new resource to be created."
+variable "server_configuration" {
+  type = map(string)
+  default = {
+    "pgaudit.log" = "ALL"
+  }
+  description = <<-EOT
+    Map of PostgreSQL Flexible Server configuration parameters to their values.
+    azure.extensions is managed automatically — use var.azure_extensions and
+    var.enable_pgvector instead of setting it manually here to avoid conflicts.
+  EOT
 }
 
 variable "storage_mb" {
@@ -436,25 +430,6 @@ variable "key_size" {
   description = "The size of the RSA key in bits."
   type        = number
   default     = 2048
-}
-
-##-----------------------------------------------------------------------------
-## pgvector Extension
-##-----------------------------------------------------------------------------
-variable "enable_pgvector" {
-  description = "Set to true to allowlist and install the pgvector (vector) extension on the PostgreSQL Flexible Server."
-  type        = bool
-  default     = false
-}
-
-variable "azure_extensions" {
-  description = <<-EOT
-    Additional PostgreSQL extensions to allowlist via the azure.extensions server parameter
-    (e.g., ["pg_trgm", "uuid-ossp"]). 'vector' is appended automatically when enable_pgvector = true.
-    Do NOT also pass 'azure.extensions' via server_configuration_name when using this variable.
-  EOT
-  type        = list(string)
-  default     = []
 }
 
 ##-----------------------------------------------------------------------------

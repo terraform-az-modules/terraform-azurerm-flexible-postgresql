@@ -65,4 +65,12 @@ module "flexible-postgresql" {
     # }
   ]
 
+  # All server params in one map — no more parallel lists
+  server_configuration = {
+    "pgaudit.log"                         = "ALL"
+    "log_connections"                     = "on"
+    "idle_in_transaction_session_timeout" = "300000"
+    "azure.extensions"                    = "VECTOR,PGAUDIT,BTREE_GIST,CITEXT,CUBE"
+  }
+
 }

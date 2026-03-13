@@ -164,12 +164,13 @@ module "flexible-postgresql" {
   password_auth_enabled         = true      # ← must be true for psql CREATE EXTENSION step
   principal_name                = "test-db" # e.g., an AAD group name
 
-  # -------------------------------------------------------
-  # pgvector
-  # -------------------------------------------------------
-  enable_pgvector = true
+  # All server params in one map — no more parallel lists
+  server_configuration = {
+    "pgaudit.log"                         = "ALL"
+    "log_connections"                     = "on"
+    "idle_in_transaction_session_timeout" = "300000"
+    "azure.extensions"                    = "VECTOR,PGAUDIT,BTREE_GIST,CITEXT,CUBE"
+  }
 
-  # Optional: allowlist additional extensions alongside vector.
-  # azure_extensions = ["PGAUDIT", "BTREE_GIST", "CITEXT", "CUBE"]
   key_type = "RSA"
 }
