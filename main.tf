@@ -19,7 +19,7 @@ module "labels" {
 ## Will be passed as admin password of mysql server when admin password is not passed manually as variable.
 ##-----------------------------------------------------------------------------
 resource "random_password" "main" {
-  count       = var.admin_password == null ? 1 : 0
+  count       = var.generate_random_password && var.admin_password == null ? 1 : 0
   length      = var.admin_password_length
   min_upper   = var.min_upper
   min_lower   = var.min_lower
@@ -36,7 +36,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   resource_group_name               = var.resource_group_name
   location                          = var.location
   administrator_login               = var.admin_username
-  administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
+  administrator_password            = var.admin_password != null ? var.admin_password : (var.generate_random_password ? random_password.main[0].result : null)
   backup_retention_days             = var.backup_retention_days
   delegated_subnet_id               = var.delegated_subnet_id
   private_dns_zone_id               = var.private_dns_zone_id
