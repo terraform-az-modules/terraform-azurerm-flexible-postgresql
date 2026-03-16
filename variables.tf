@@ -102,6 +102,16 @@ variable "admin_password_length" {
   description = "Length of the randomly generated admin password, if not provided."
 }
 
+variable "generate_random_password" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+    Set to true to auto-generate a random admin password when admin_password is not provided.
+    Generated password is stored in Terraform state.
+    When false (default), admin_password must be explicitly provided.
+  EOT
+}
+
 variable "min_upper" {
   type        = number
   default     = 4
