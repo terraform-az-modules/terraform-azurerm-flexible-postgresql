@@ -80,9 +80,9 @@ resource "azurerm_postgresql_flexible_server" "main" {
 
   }
 
-  identity  {
-      type         = var.cmk_encryption_enabled ? "SystemAssigned, UserAssigned" : "SystemAssigned"
-      identity_ids = var.cmk_encryption_enabled ? [azurerm_user_assigned_identity.identity[0].id] : null
+  identity {
+    type         = var.cmk_encryption_enabled ? "SystemAssigned, UserAssigned" : "SystemAssigned"
+    identity_ids = var.cmk_encryption_enabled ? [azurerm_user_assigned_identity.identity[0].id] : null
   }
 
   dynamic "customer_managed_key" {
