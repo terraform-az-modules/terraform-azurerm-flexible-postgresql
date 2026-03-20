@@ -2,8 +2,8 @@
 ## Permissions, Roles, and Policies
 ##-----------------------------------------------------------------------------
 
-##----------------------------------------------------------------------------- 
-## Below resource will create user assigned identity in your azure environment.  
+##-----------------------------------------------------------------------------
+## Below resource will create user assigned identity in your azure environment.
 ##-----------------------------------------------------------------------------
 resource "azurerm_user_assigned_identity" "identity" {
   count               = var.enabled && var.cmk_encryption_enabled ? 1 : 0
@@ -22,8 +22,8 @@ resource "azurerm_role_assignment" "rbac_keyvault_crypto_officer" {
   principal_id         = each.value
 }
 
-##----------------------------------------------------------------------------- 
-## Below resource will assign 'Key Vault Crypto Service Encryption User' role to user assigned identity created above. 
+##-----------------------------------------------------------------------------
+## Below resource will assign 'Key Vault Crypto Service Encryption User' role to user assigned identity created above.
 ##-----------------------------------------------------------------------------
 resource "azurerm_role_assignment" "identity_assigned" {
   depends_on           = [azurerm_user_assigned_identity.identity]

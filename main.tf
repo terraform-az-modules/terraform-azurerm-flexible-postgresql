@@ -27,8 +27,8 @@ resource "random_password" "main" {
   special     = var.special
 }
 
-##----------------------------------------------------------------------------- 
-## Below resource will create postgresql flexible server.    
+##-----------------------------------------------------------------------------
+## Below resource will create postgresql flexible server.
 ##-----------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server" "main" {
   count                             = var.enabled ? 1 : 0
@@ -101,7 +101,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
 }
 
 ##-----------------------------------------------------------------------------
-## Key Vault Key - Deploy encryption key 
+## Key Vault Key - Deploy encryption key
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "cmk_key" {
   count           = var.enabled && var.cmk_encryption_enabled ? 1 : 0
@@ -197,7 +197,7 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "ma
 }
 
 ##-----------------------------------------------------------------------------
-## Private Endpoint 
+## Private Endpoint
 ##-----------------------------------------------------------------------------
 resource "azurerm_private_endpoint" "pep" {
   count               = var.enabled && var.enable_private_endpoint ? 1 : 0
