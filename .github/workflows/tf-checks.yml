@@ -10,7 +10,7 @@ jobs:
     uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
     with:
       working_directory: './examples/private_pqsql_vnet_integration/'
-      provider: 'azurerm'
+      provider: none
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       GITHUB: ${{ secrets.GITHUB }}
@@ -19,7 +19,7 @@ jobs:
     uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
     with:
       working_directory: './examples/private_pqsql_with_private_endpoint/'  
-      provider: 'azurerm'
+      provider: none
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       GITHUB: ${{ secrets.GITHUB }}    
@@ -28,7 +28,7 @@ jobs:
     uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
     with:
       working_directory: './examples/public_pqsql_basic/'
-      provider: 'azurerm'
+      provider: none
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       GITHUB: ${{ secrets.GITHUB }}
