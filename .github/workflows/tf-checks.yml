@@ -18,11 +18,11 @@ jobs:
   private_pqsql_private_endpoint-example:
     uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
     with:
-      working_directory: './examples/private_pqsql_with_private_endpoint/'  
+      working_directory: './examples/private_pqsql_with_private_endpoint/'
       provider: none
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      GITHUB: ${{ secrets.GITHUB }}    
+      GITHUB: ${{ secrets.GITHUB }}
 
   public_pqsql_basic-example:
     uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
