@@ -19,4 +19,8 @@ terraform {
       version = ">= 3.0.0"
     }
   }
+
+  provider_meta "azurerm" {
+    module_name = "terraform-az-modules/terraform-azurerm-flexible-postgresql"
+  }
 }
