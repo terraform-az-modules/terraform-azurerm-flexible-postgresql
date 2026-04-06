@@ -458,3 +458,9 @@ variable "firewall_rules" {
   }))
   default = []
 }
+
+variable "private_endpoint_location" {
+  type        = string
+  default     = null
+  description = "The Location for the private Endpoint of PostgreSQL Flexible Server."
+}
