@@ -202,7 +202,7 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "ma
 resource "azurerm_private_endpoint" "pep" {
   count               = var.enabled && var.enable_private_endpoint ? 1 : 0
   name                = var.resource_position_prefix ? format("pgsql-pe-%s", local.name) : format("%s-pgsql-pe", local.name)
-  location            = var.location
+  location            = var.private_endpoint_location == null ? var.location : var.private_endpoint_location
   resource_group_name = var.resource_group_name
   subnet_id           = var.private_endpoint_subnet_id
   tags                = module.labels.tags

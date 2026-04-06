@@ -1,40 +1,31 @@
 name: tf-checks
+
 on:
-  push:
-    branches: [ master ]
   pull_request:
   workflow_dispatch:
+
 jobs:
 # Update 'Job name' and 'working_directory' as needed based on the module structure.
   private_pqsql_vnet_integration-example:
-    uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/private_pqsql_vnet_integration/'
       provider: none
-    secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      GITHUB: ${{ secrets.GITHUB }}
 
   private_pqsql_private_endpoint-example:
-    uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/private_pqsql_with_private_endpoint/'
       provider: none
-    secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      GITHUB: ${{ secrets.GITHUB }}
 
   public_pqsql_basic-example:
-    uses: ashekhawat-cd/github-shared-workflows/.github/workflows/tf-checks.yml@fix/tf-checks
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/public_pqsql_basic/'
       provider: none
-    secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      GITHUB: ${{ secrets.GITHUB }}
 
 # Seperate Job for TFlint workflow call
   tf-lint:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-lint.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-lint.yml@v2
     secrets:
       GITHUB: ${{ secrets.GITHUB }}
