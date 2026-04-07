@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.7] - 2026-04-07
+### :bug: Bug Fixes
+- [`64d17fe`](https://github.com/terraform-az-modules/terraform-azurerm-flexible-postgresql/commit/64d17fe96f3ebd1a48531bca8419d5c6e958f058) - private_dns_group_id of pe *(PR [#27](https://github.com/terraform-az-modules/terraform-azurerm-flexible-postgresql/pull/27) by [@ashekhawat-cd](https://github.com/ashekhawat-cd))*
+
+
 ## [v1.0.6] - 2026-04-06
 ### :bug: Bug Fixes
 - [`9df3e4b`](https://github.com/terraform-az-modules/terraform-azurerm-flexible-postgresql/commit/9df3e4b84a993b9edd76e3442a68eeaeec6085e8) - consolidate versions.tf, remove provider_meta, upgrade to azurerm >= 4.0 *(commit by [@anmolnagpal](https://github.com/anmolnagpal))*
@@ -26,3 +31,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set provider: none in tf-checks for validate-only CI
 - Bump required_version to >= 1.10.0
 [v1.0.6]: https://github.com/terraform-az-modules/terraform-azurerm-flexible-postgresql/compare/v1.0.5...v1.0.6
+[v1.0.7]: https://github.com/terraform-az-modules/terraform-azurerm-flexible-postgresql/compare/v1.0.6...v1.0.7
