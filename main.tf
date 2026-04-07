@@ -39,7 +39,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
   administrator_password            = var.admin_password != null ? var.admin_password : (var.generate_random_password ? random_password.main[0].result : null)
   backup_retention_days             = var.backup_retention_days
   delegated_subnet_id               = var.delegated_subnet_id
-  private_dns_zone_id               = var.private_dns_zone_id
+  private_dns_zone_id               = var.vnet_int_private_dns_zone_id
   public_network_access_enabled     = var.public_network_access_enabled
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode

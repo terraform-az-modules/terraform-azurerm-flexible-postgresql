@@ -375,10 +375,16 @@ variable "private_endpoint_subnet_id" {
   description = "The subnet ID where the private endpoint will be deployed"
 }
 
-variable "private_dns_zone_id" {
+variable "vnet_int_private_dns_zone_id" {
   type        = string
   default     = null
   description = "The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server."
+}
+
+variable "private_dns_zone_id" {
+  type        = string
+  default     = null
+  description = "The ID of the Private DNS Zone to associate with the PostgreSQL Flexible Server Private Endpoint."
 }
 
 variable "geo_backup_key_vault_key_id" {
