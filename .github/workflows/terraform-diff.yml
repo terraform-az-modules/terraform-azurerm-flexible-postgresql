@@ -1,18 +1,17 @@
-name: Terraform plan Difference
+name: Terraform Plan PR Diff
+
 on:
   pull_request:
     branches:
       - master
     paths:
-      - 'examples/private_pqsql_vnet_integration/**'
-      - 'examples/private_pqsql_with_private_endpoint/**'
-      - 'examples/public_pqsql_basic/**'
+      - 'examples/complete/**'
 
 jobs:
 # Update 'Job name' and 'terraform_directory' as needed based on the module structure.
   private_pqsql_vnet_integration-example:
     if: github.actor != 'dependabot[bot]'
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@v2
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-diff-checks.yml@v2
     with:
       provider: 'azurerm'
       terraform_directory: 'examples/private_pqsql_vnet_integration'
@@ -23,7 +22,7 @@ jobs:
 
   private_pqsql_with_private_endpoint-example:
     if: github.actor != 'dependabot[bot]'
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@v2
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-diff-checks.yml@v2
     with:
       provider: 'azurerm'
       terraform_directory: 'examples/private_pqsql_with_private_endpoint'
@@ -34,7 +33,7 @@ jobs:
 
   public_pqsql-example:
     if: github.actor != 'dependabot[bot]'
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-pr-checks.yaml@v2
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-diff-checks.yml@v2
     with:
       provider: 'azurerm'
       terraform_directory: 'examples/public_pqsql_basic'
