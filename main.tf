@@ -225,6 +225,7 @@ resource "azurerm_private_endpoint" "pep" {
     ]
   }
 }
+
 ##-----------------------------------------------------------------------------
 ## PostgreSQL Flexible Server Firewall Rules
 ## Only applicable when public_network_access_enabled = true
