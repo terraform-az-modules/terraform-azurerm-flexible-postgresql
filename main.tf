@@ -201,29 +201,30 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "ma
 ##-----------------------------------------------------------------------------
 resource "azurerm_private_endpoint" "pep" {
   count               = var.enabled && var.enable_private_endpoint ? 1 : 0
-  name                = var.resource_position_prefix ? format("pgsql-pe-%s", local.name) : format("%s-pgsql-pe", local.name)
+  name                = var.resource_position_prefix ? format("pe-%s", azurerm_postgresql_flexible_server.main[0].name) : format("%s-pe", azurerm_postgresql_flexible_server.main[0].name)
   location            = var.private_endpoint_location == null ? var.location : var.private_endpoint_location
   resource_group_name = var.resource_group_name
   subnet_id           = var.private_endpoint_subnet_id
   tags                = module.labels.tags
+
   private_service_connection {
-    name                           = var.resource_position_prefix ? format("pgsql-psc-%s", local.name) : format("%s-pgsql-psc", local.name)
+    name                           = var.resource_position_prefix ? format("psc-%s", azurerm_postgresql_flexible_server.main[0].name) : format("%s-psc", azurerm_postgresql_flexible_server.main[0].name)
     is_manual_connection           = false
     private_connection_resource_id = azurerm_postgresql_flexible_server.main[0].id
     subresource_names              = ["postgresqlServer"]
   }
 
   private_dns_zone_group {
-    name                 = var.resource_position_prefix ? format("pgsql-dns-zone-group-%s", local.name) : format("%s-pgsql-dns-zone-group", local.name)
+    name                 = var.resource_position_prefix ? format("dns-zone-group-%s", azurerm_postgresql_flexible_server.main[0].name) : format("%s-dns-zone-group", azurerm_postgresql_flexible_server.main[0].name)
     private_dns_zone_ids = [var.private_dns_zone_id]
   }
+
   lifecycle {
     ignore_changes = [
       tags,
     ]
   }
 }
-
 ##-----------------------------------------------------------------------------
 ## PostgreSQL Flexible Server Firewall Rules
 ## Only applicable when public_network_access_enabled = true
