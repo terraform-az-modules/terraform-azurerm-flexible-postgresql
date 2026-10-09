@@ -8,7 +8,7 @@
 resource "azurerm_user_assigned_identity" "identity" {
   count               = var.enabled && var.cmk_encryption_enabled ? 1 : 0
   location            = var.location
-  name                = var.resource_position_prefix ? format("mid-pgsql-%s", local.name) : format("%s-mid-pgsql", local.name)
+  name                = var.resource_position_prefix ? format("mid-pgsql-fs-%s", local.name) : format("%s-mid-pgsql-fs", local.name)
   resource_group_name = var.resource_group_name
 }
 
