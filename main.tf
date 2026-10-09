@@ -105,7 +105,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "cmk_key" {
   count           = var.enabled && var.cmk_encryption_enabled ? 1 : 0
-  name            = var.resource_position_prefix ? format("cmk-key-pgsql-fe-%s", local.name) : format("%s-cmk-key-pgsql-fe", local.name)
+  name            = var.resource_position_prefix ? format("cmk-key-pgsql-fs-%s", local.name) : format("%s-cmk-key-pgsql-fs", local.name)
   key_vault_id    = var.key_vault_id
   key_type        = var.key_type
   key_size        = var.key_size
